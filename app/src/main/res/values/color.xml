@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="card_action_inverted">@android:color/white</color>
+
+    <color name="card_content_textcolor">#444</color>
+
+    <color name="search_header_bar_background">#F0F0F0</color>
+    <color name="search_font_color">#525252</color>
+    <color name="search_text_hint_color">#BBBBBB</color>
+</resources>

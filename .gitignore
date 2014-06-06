@@ -1,0 +1,3 @@
+*.class
+FennecSearch/build/*
+FennecSearch/app/src/main/java/com/mozilla/fennec/search/Configuration.java
