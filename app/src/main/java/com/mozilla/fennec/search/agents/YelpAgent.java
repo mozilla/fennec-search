@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.mozilla.fennec.search.Configuration;
+import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.models.restaurant.RestaurantModel;
 import com.mozilla.fennec.search.models.restaurant.RestaurantRow;
 import com.mozilla.fennec.search.models.units.Distance;
@@ -16,8 +17,8 @@ import org.json.JSONObject;
 
 public class YelpAgent extends JsonAgent {
 
-  public YelpAgent(Activity activity) {
-    super(activity);
+  public YelpAgent(Activity activity, AcceptsCard cardSink) {
+    super(activity, cardSink);
   }
 
   @Override
@@ -31,7 +32,7 @@ public class YelpAgent extends JsonAgent {
     // This follows the convention of fetchJson since Scribe (which YelpClient is using)
     // returns null on failure
     // See: https://github.com/fernandezpablo85/scribe-java/blob/master/src/main/java/org/scribe/model/Response.java#L67
-    String results = yelpClient.search(query.getQueryString(), query.getmLatitude(), query.getmLongitude());
+    String results = yelpClient.search(query.getQueryString(), query.getLatitude(), query.getLongitude());
     Log.i("yelpResults", results);
     return results;
   }

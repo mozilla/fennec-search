@@ -8,13 +8,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mozilla.fennec.search.R;
+import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.cards.EntityCard;
 import com.mozilla.fennec.search.cards.RestaurantCard;
 import com.mozilla.fennec.search.cards.RowCard;
 import com.mozilla.fennec.search.cards.TitleCard;
 import com.mozilla.fennec.search.cards.WeatherCard;
+import com.mozilla.fennec.search.models.BasicCardModel;
 import com.mozilla.fennec.search.models.CardModel;
-import com.mozilla.fennec.search.models.TitleDescriptionCardModel;
 import com.mozilla.fennec.search.models.entity.EntityModel;
 import com.mozilla.fennec.search.models.restaurant.RestaurantModel;
 import com.mozilla.fennec.search.models.weather.WeatherModel;
@@ -31,8 +32,10 @@ import de.greenrobot.event.EventBus;
 public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
 
   private Activity mActivity;
-  public HttpAgent(Activity activity) {
+  private AcceptsCard mCardSink;
+  public  HttpAgent(Activity activity, AcceptsCard cardSink) {
     mActivity = activity;
+    mCardSink = cardSink;
   }
 
   public void runAsync(Query query) {
@@ -49,12 +52,12 @@ public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
     if (model instanceof WeatherModel) {
       WeatherCard card = new WeatherCard(mActivity);
       card.ingest((WeatherModel) model);
-      EventBus.getDefault().post(card);
-    } else if (model instanceof TitleDescriptionCardModel) {
+      mCardSink.addCard(card);
+    } else if (model instanceof BasicCardModel) {
       TitleCard card = new TitleCard(mActivity);
-      card.setTitle(((TitleDescriptionCardModel) model).getTitle());
-      card.setBody(((TitleDescriptionCardModel) model).getDescription());
-      card.setCardTag(((TitleDescriptionCardModel) model).getTitle());
+      card.setTitle(((BasicCardModel) model).getTitle());
+      card.setBody(((BasicCardModel) model).getDescription());
+      card.setCardTag(((BasicCardModel) model).getTitle());
       EventBus.getDefault().post(card);
     } else if (model instanceof RestaurantModel) {
       RestaurantCard card = new RestaurantCard(mActivity);

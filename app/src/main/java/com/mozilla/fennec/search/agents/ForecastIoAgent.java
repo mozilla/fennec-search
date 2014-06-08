@@ -3,6 +3,7 @@ package com.mozilla.fennec.search.agents;
 import android.app.Activity;
 import android.text.format.Time;
 
+import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.models.units.Temperature;
 import com.mozilla.fennec.search.models.weather.WeatherConditions;
 import com.mozilla.fennec.search.models.weather.WeatherForecast;
@@ -40,18 +41,16 @@ public class ForecastIoAgent extends JsonAgent {
     conditionLookup.put("tornado", WeatherConditions.TORNADO);
   }
 
-  public ForecastIoAgent(Activity activity) {
-    super(activity);
+  public ForecastIoAgent(Activity activity, AcceptsCard cardSink) {
+    super(activity, cardSink);
   }
+
 
   @Override
   protected String fetchJson(Query query) {
     String url =
         String.format("https://api.forecast.io/forecast/28a2e15ab413e47a7bad54c04763813f/%f,%f?units=si",
-            query.getmLatitude(), query.getmLongitude());
-//    Log.i("url", url);
-//    Log.i("mockweather", sink.getActivity().getString(R.string.mock_weather));
-//    return sink.getActivity().getString(R.string.mock_weather);
+            query.getLatitude(), query.getLongitude());
     try {
 
       return fetchHttp(url);

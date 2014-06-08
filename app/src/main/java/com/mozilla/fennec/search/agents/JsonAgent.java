@@ -3,14 +3,16 @@ package com.mozilla.fennec.search.agents;
 import android.app.Activity;
 import android.util.Log;
 
+import com.mozilla.fennec.search.cards.AcceptsCard;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public abstract class JsonAgent extends HttpAgent<JsonResponse> {
 
 
-  public JsonAgent(Activity activity) {
-    super(activity);
+  public JsonAgent(Activity activity, AcceptsCard cardSink) {
+    super(activity, cardSink);
   }
 
   @Override

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.models.RowModel;
 
 import org.json.JSONArray;
@@ -13,8 +14,8 @@ import java.io.IOException;
 
 public class WikipediaAgent extends JsonAgent {
 
-  public WikipediaAgent(Activity activity) {
-    super(activity);
+  public WikipediaAgent(Activity activity, AcceptsCard cardSink) {
+    super(activity, cardSink);
   }
 
   @Override

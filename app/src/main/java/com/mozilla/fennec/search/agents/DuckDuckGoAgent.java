@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.models.entity.EntityModel;
 
 import org.json.JSONException;
@@ -11,8 +12,9 @@ import org.json.JSONException;
 import java.io.IOException;
 
 public class DuckDuckGoAgent extends JsonAgent {
-  public DuckDuckGoAgent(Activity activity) {
-    super(activity);
+
+  public DuckDuckGoAgent(Activity activity, AcceptsCard cardSink) {
+    super(activity, cardSink);
   }
 
   @Override
