@@ -19,7 +19,6 @@ package com.mozilla.fennec.search;
 
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -28,6 +27,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.android.cardstream.CardStreamStateManager;
 import com.mozilla.fennec.search.agents.DuckDuckGoAgent;
@@ -36,58 +36,28 @@ import com.mozilla.fennec.search.agents.JsonAgent;
 import com.mozilla.fennec.search.agents.Query;
 import com.mozilla.fennec.search.agents.WikipediaAgent;
 import com.mozilla.fennec.search.agents.YelpAgent;
+import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.cards.IsCard;
-import com.mozilla.fennec.search.events.StartAutoCompleteEvent;
-import com.mozilla.fennec.search.events.UserSubmitQueryEvent;
-import com.mozilla.fennec.search.events.UserTypeQueryEvent;
-import com.mozilla.fennec.search.services.AutoCompleteService;
-import com.mozilla.fennec.search.services.HistoryService;
-import com.mozilla.fennec.search.widgets.AutoCompleteFragment;
-import com.mozilla.fennec.search.widgets.SearchWidget;
 
-import de.greenrobot.event.EventBus;
+import java.util.ArrayList;
 
-public class MainActivity extends Activity {
 
-  private SearchWidget mSearchWidget;
+public class MainActivity extends Activity implements AcceptsCard {
+
+  private static final String STREAM_TAG = "STREAM_WIDGET";
   private CardStreamStateManager mCardManager;
-  private AutoCompleteFragment mAutoCompleteFragment;
-
   private Location mCurrentLocation;
   private LocationManager mLocationManager;
-
-  private static final String SEARCH_TAG = "SEARCH_WIDGET";
-  private static final String AUTOCOMPLETE_TAG = "AUTOCOMPLETE_WIDGET";
-  private static final String STREAM_TAG = "STREAM_WIDGET";
+  private String mCurrentQuery;
+  private ArrayList<IsCard> cards;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Log.i("MainActivity", "onCreate");
+    cards = new ArrayList<IsCard>();
     setContentView(R.layout.activity_main);
 
-    EventBus.getDefault().register(this);
-
     FragmentManager fm = getFragmentManager();
-
-    mSearchWidget = (SearchWidget) fm.findFragmentByTag(SEARCH_TAG);
-
-    if (mSearchWidget == null) {
-      FragmentTransaction txn = fm.beginTransaction();
-      mSearchWidget = new SearchWidget();
-      txn.add(R.id.container, mSearchWidget, SEARCH_TAG);
-      txn.commit();
-    }
-
-    mAutoCompleteFragment = (AutoCompleteFragment) fm.findFragmentByTag(AUTOCOMPLETE_TAG);
-
-    if (mAutoCompleteFragment == null) {
-      FragmentTransaction txn = fm.beginTransaction();
-      mAutoCompleteFragment = new AutoCompleteFragment();
-      txn.add(R.id.container, mAutoCompleteFragment, AUTOCOMPLETE_TAG);
-      txn.commit();
-    }
-
     mCardManager = (CardStreamStateManager) fm.findFragmentByTag(STREAM_TAG);
 
     if (mCardManager == null) {
@@ -103,8 +73,6 @@ public class MainActivity extends Activity {
   public void onStart() {
     super.onStart();
 
-    mAutoCompleteFragment.getView().setVisibility(View.GONE);
-
     Log.i("MainActivity", "onStart");
     if (mLocationManager == null) {
       mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
@@ -112,111 +80,82 @@ public class MainActivity extends Activity {
 
     // TODO: Add test for disabled GPS.
     mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-  }
 
-  @Override
-  protected void onRestart() {
-    Log.i("MainActivity", "onRestart");
-    super.onRestart();
-  }
+    if (cards.isEmpty()) {
+      if (getIntent().hasExtra(AutoCompleteActivity.QUERY)) {
+        String query = getIntent().getStringExtra(AutoCompleteActivity.QUERY);
+        doSearch(query);
+        ((TextView)findViewById(R.id.fake_search_box)).setText(query);
+        mCurrentQuery = query;
+      }
+      else {
+        doSearch();
+        ((TextView)findViewById(R.id.fake_search_box)).setText("");
+      }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    Log.i("MainActivity", "onResume");
-
-    HistoryService.startActionQueryHistory(this, 3);
-
-    if (mCardManager.isEmpty()) {
-
-      if (mCurrentLocation != null) {
-        JsonAgent weatherAgent = new ForecastIoAgent(this);
-        weatherAgent.runAsync(new Query(mCurrentLocation));
+    } else {
+      for (IsCard card : cards) {
+        addCard(card);
       }
     }
-  }
 
-  @Override
-  protected void onNewIntent(Intent intent) {
-    super.onNewIntent(intent);
-    Log.i("MainActivity", "onNewIntent");
-  }
-
-  @Override
-  protected void onPause() {
-    Log.i("MainActivity", "onPause");
-    super.onPause();
   }
 
   @Override
   public void onStop() {
-    Log.i("MainActivity", "onStop");
     super.onStop();
     mLocationManager = null;
+    mCurrentLocation = null;
   }
 
-  @Override
-  protected void onDestroy() {
-    Log.i("MainActivity", "onDestroy");
-    super.onDestroy();
-
-    EventBus.getDefault().unregister(this);
-
-    Fragment fragment = getFragmentManager().findFragmentByTag(STREAM_TAG);
-  }
-
-  // Start searching
-  public void onEventMainThread(StartAutoCompleteEvent event) {
+  private void doSearch() {
     mCardManager.deleteAllCards();
-    mAutoCompleteFragment.getView().setVisibility(View.VISIBLE);
+
+    JsonAgent weatherAgent = new ForecastIoAgent(this, this);
+    weatherAgent.runAsync(new Query(mCurrentLocation));
+
   }
-
-  // Done searching
-  public void onEvent(UserSubmitQueryEvent event) {
-    Log.i("EventHandler", "UserSubmitQueryEvent");
-    mAutoCompleteFragment.getView().setVisibility(View.GONE);
-    HistoryService.startActionRecordQuery(this, event.getQuery());
-    doSearch(event.getQuery());
-  }
-
-  public void onEventMainThread(IsCard card) {
-    Log.i("SearchActivity::Event", "add card");
-    addCard(card, false);
-  }
-
-  public void onEventMainThread(UserTypeQueryEvent event) {
-    Log.i("EventHandler", "UserTypeQueryEvent");
-    AutoCompleteService.startSearch(this, event.getQuery());
-  }
-
-
 
   private void doSearch(String queryString) {
-    LocationManager locationManager =
-        (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-
-    Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     mCardManager.deleteAllCards();
 
-    JsonAgent ddgAgent = new DuckDuckGoAgent(this);
+    JsonAgent ddgAgent = new DuckDuckGoAgent(this, this);
     ddgAgent.runAsync(new Query(queryString));
 
-    JsonAgent yelpAgent = new YelpAgent(this);
-    yelpAgent.runAsync(new Query(queryString, location));
+    JsonAgent yelpAgent = new YelpAgent(this, this);
+    yelpAgent.runAsync(new Query(queryString, mCurrentLocation));
 
-    JsonAgent wikipediaAgent = new WikipediaAgent(this);
-    wikipediaAgent.runAsync(new Query(queryString, location));
+    JsonAgent wikipediaAgent = new WikipediaAgent(this, this);
+    wikipediaAgent.runAsync(new Query(queryString, mCurrentLocation));
   }
 
   public void addCard(IsCard card) {
     // By setting 'true' here, we're saying that cards
     // are automatically added and vieweable.
-    mCardManager.addCard(card, true);
+    addCard(card, true);
   }
 
   public void addCard(IsCard card, Boolean canDismiss) {
+    if (!cards.contains(card)) {
+      cards.add(card);
+    }
+
+    showCard(card, canDismiss);
+  }
+
+  private void showCard(IsCard card, Boolean canDismiss) {
     mCardManager.addCard(card);
     mCardManager.showCard(card.getCardTag(), canDismiss);
   }
 
+  public void startAutoComplete(String query) {
+    Intent intent = new Intent(this, AutoCompleteActivity.class);
+    if (query != null)
+      intent.putExtra(AutoCompleteActivity.QUERY, query);
+    startActivity(intent);
+  }
+
+  public void onSearchClick(View view) {
+    startAutoComplete(mCurrentQuery);
+  }
 }
