@@ -3,12 +3,16 @@ package com.mozilla.fennec.search.agents;
 import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.mozilla.fennec.search.Configuration;
+import com.mozilla.fennec.search.R;
 import com.mozilla.fennec.search.cards.AcceptsCard;
+import com.mozilla.fennec.search.models.restaurant.RestaurantList;
 import com.mozilla.fennec.search.models.restaurant.RestaurantModel;
-import com.mozilla.fennec.search.models.restaurant.RestaurantRow;
+import com.mozilla.fennec.search.models.units.Address;
 import com.mozilla.fennec.search.models.units.Distance;
+import com.mozilla.fennec.search.models.units.URI;
 import com.yelp.api.Yelp;
 
 import org.json.JSONArray;
@@ -38,30 +42,74 @@ public class YelpAgent extends JsonAgent {
   }
 
   @Override
-  protected RestaurantModel createCardModel(JsonResponse response) {
-    RestaurantModel model = new RestaurantModel("Yelp");
+  protected RestaurantList createCardModel(JsonResponse response) {
+    RestaurantList model = new RestaurantList("Yelp");
     try {
       JSONArray results = response.getResponse().getJSONArray("businesses");
       if (results.length() == 0)
         return null;
       for (int i = 0; i < results.length(); i++) {
         JSONObject result = results.getJSONObject(i);
-        RestaurantRow.RestaurantRowBuilder builder = new RestaurantRow.RestaurantRowBuilder();
+        RestaurantModel.RestaurantModelBuilder builder = new RestaurantModel.RestaurantModelBuilder();
 
-        model.addRow(builder
-                .setName(result.getString("name"))
-                .setThumbnail(Uri.parse(result.getString("image_url")))
-                .setRating(result.getDouble("rating"))
-                .setDistance(Distance.fromMeters(result.getInt("distance")))
-                .setProviderPage(Uri.parse(result.getString("mobile_url")))
-                .createRestaurantRow()
-        );
+        if (result.has("name"))
+          builder.setName(result.getString("name"));
+        if (result.has("image_url")) {
+          builder.setThumbnailImage(new URI(result.getString("image_url").replace("ms.jpg", "sl.jpg")))
+              // Yelp uses the suffix on the image to determine its size
+              // https://stackoverflow.com/questions/22000077/how-to-request-larger-images-from-yelp-api
+              .setImage(new URI(result.getString("image_url").replace("ms.jpg", "o.jpg")));
+        }
+
+        if (result.has("rating_img_url_large"))
+
+          builder.setRatingImage(new URI(result.getString("rating_img_url_large")));
+        if (result.has("snippet_text"))
+          builder.setSnippet(result.getString("snippet_text"));
+        if (result.has("rating"))
+          builder.setRating(result.getDouble("rating"));
+        if (result.has("review_count"))
+          builder.setNumRatings(result.getInt("review_count"));
+        if (result.has("distance"))
+          builder.setDistance(Distance.fromMeters(result.getInt("distance")));
+        if (result.has("mobile_url"))
+          builder.setProviderPage(new URI(result.getString("mobile_url")));
+        if (result.has("id"))
+          builder.setYelpId(result.getString("id"));
+        builder.setAddress(extract_address(result));
+        model.addRow(builder.createRestaurantModel());
       }
 
     } catch (JSONException e) {
       return null;
     }
     return model;
+  }
+
+  private Address extract_address(JSONObject result) throws JSONException {
+    final JSONObject addressJson = result.getJSONObject("location");
+    Address.AddressBuilder builder = new Address.AddressBuilder();
+
+    if (addressJson.has("address")) {
+      JSONArray streetParts = addressJson.getJSONArray("address");
+      if (streetParts.length() > 0)
+        builder.setStreet(streetParts.getString(0));
+    }
+
+
+    if (addressJson.has("city"))
+      builder.setCity(addressJson.getString("city"));
+
+    if (addressJson.has("state_code"))
+      builder.setState(addressJson.getString("state_code"));
+
+    if (addressJson.has("postal_code"))
+      builder.setZip(addressJson.getString("postal_code"));
+
+    if (addressJson.has("country_code"))
+      builder.setCity(addressJson.getString("country_code"));
+
+    return builder.createAddress();
   }
 
 
