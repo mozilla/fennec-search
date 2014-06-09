@@ -4,7 +4,7 @@ import android.text.format.Time;
 import android.util.Log;
 
 import com.mozilla.fennec.search.models.TitleCardModel;
-import com.mozilla.fennec.search.models.units.Temperature;
+import com.mozilla.fennec.search.models.types.Temperature;
 
 import java.util.ArrayList;
 import java.util.List;

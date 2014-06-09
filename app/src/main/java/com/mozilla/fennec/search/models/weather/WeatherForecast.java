@@ -2,7 +2,7 @@ package com.mozilla.fennec.search.models.weather;
 
 import android.text.format.Time;
 
-import com.mozilla.fennec.search.models.units.Temperature;
+import com.mozilla.fennec.search.models.types.Temperature;
 
 public class WeatherForecast {
   private WeatherConditions condition;

@@ -1,18 +1,15 @@
 package com.mozilla.fennec.search.agents;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.mozilla.fennec.search.Configuration;
-import com.mozilla.fennec.search.R;
 import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.models.restaurant.RestaurantList;
 import com.mozilla.fennec.search.models.restaurant.RestaurantModel;
-import com.mozilla.fennec.search.models.units.Address;
-import com.mozilla.fennec.search.models.units.Distance;
-import com.mozilla.fennec.search.models.units.URI;
+import com.mozilla.fennec.search.models.types.Address;
+import com.mozilla.fennec.search.models.types.Distance;
+import com.mozilla.fennec.search.models.types.URI;
 import com.yelp.api.Yelp;
 
 import org.json.JSONArray;

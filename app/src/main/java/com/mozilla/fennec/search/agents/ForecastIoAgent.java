@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.text.format.Time;
 
 import com.mozilla.fennec.search.cards.AcceptsCard;
-import com.mozilla.fennec.search.models.units.Temperature;
+import com.mozilla.fennec.search.models.types.Temperature;
 import com.mozilla.fennec.search.models.weather.WeatherConditions;
 import com.mozilla.fennec.search.models.weather.WeatherForecast;
 import com.mozilla.fennec.search.models.weather.WeatherModel;

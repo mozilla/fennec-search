@@ -12,9 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mozilla.fennec.search.R;
-import com.mozilla.fennec.search.events.AutoCompleteChangedEvent;
-import com.mozilla.fennec.search.events.UserSelectAutoComplete;
-import com.mozilla.fennec.search.events.UserSubmitQueryEvent;
+import com.mozilla.fennec.search.events.AutoCompleteJumpEvent;
+import com.mozilla.fennec.search.events.AutoCompleteSelectEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class AutoCompleteFragment extends Fragment {
   private static final String[] START_QUERIES = {"sf giants", "30 rock", "coffee"};
   private LinearLayout resultListView;
   private View rootView;
-  private List<View> rowPool;
+  private List<AutoCompleteRow> rowPool;
 
   public AutoCompleteFragment() {
   }
@@ -39,9 +38,7 @@ public class AutoCompleteFragment extends Fragment {
     rootView = inflater.inflate(R.layout.auto_complete_widget, container, false);
     resultListView = (LinearLayout) rootView.findViewById(R.id.result_list);
 
-    EventBus.getDefault().register(this);
-
-    rowPool = new ArrayList<View>();
+    rowPool = new ArrayList<AutoCompleteRow>();
 
     for (int i = 0; i < MAX_ROWS; i++) {
       AutoCompleteRow row = new AutoCompleteRow(getActivity());
@@ -55,17 +52,21 @@ public class AutoCompleteFragment extends Fragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    EventBus.getDefault().unregister(this);
     resultListView = null;
     rootView = null;
     rowPool = null;
   }
 
-  public void onEventMainThread(AutoCompleteChangedEvent event) {
-    List<String> results = event.getResults();
-    int numRows = Math.min(results.size(), MAX_ROWS);
-    for (int i = 0; i < numRows; i++) {
-      ((AutoCompleteRow) rowPool.get(i)).setText(results.get(i));
+  public void clearResults() {
+    for (int i = 0; i < MAX_ROWS; i++) {
+      rowPool.get(i).setText("");
+    }
+  }
+
+  public void setResults(List<String> results) {
+    int numResults = Math.min(results.size(), MAX_ROWS);
+    for (int i = 0; i < MAX_ROWS; i++) {
+      rowPool.get(i).setText(results.get(i));
     }
   }
 
@@ -91,7 +92,7 @@ public class AutoCompleteFragment extends Fragment {
       rowText.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          UserSubmitQueryEvent event = new UserSubmitQueryEvent(getText());
+          AutoCompleteSelectEvent event = new AutoCompleteSelectEvent(getText());
           EventBus.getDefault().post(event);
         }
       });
@@ -99,7 +100,7 @@ public class AutoCompleteFragment extends Fragment {
         @Override
         public void onClick(View view) {
           Log.i("ClickHandler", "Row Button");
-          UserSelectAutoComplete event = new UserSelectAutoComplete();
+          AutoCompleteJumpEvent event = new AutoCompleteJumpEvent();
           event.setQuery(getText());
           EventBus.getDefault().post(event);
         }

@@ -1,8 +1,8 @@
 package com.mozilla.fennec.search.models.restaurant;
 
-import com.mozilla.fennec.search.models.units.Address;
-import com.mozilla.fennec.search.models.units.Distance;
-import com.mozilla.fennec.search.models.units.URI;
+import com.mozilla.fennec.search.models.types.Address;
+import com.mozilla.fennec.search.models.types.Distance;
+import com.mozilla.fennec.search.models.types.URI;
 
 import java.io.Serializable;
 

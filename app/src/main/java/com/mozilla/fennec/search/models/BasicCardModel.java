@@ -1,9 +1,9 @@
 package com.mozilla.fennec.search.models;
 
-public class TitleDescriptionCardModel extends TitleCardModel {
+public class BasicCardModel extends TitleCardModel {
   private String description;
 
-  public TitleDescriptionCardModel(String title, String description) {
+  public BasicCardModel(String title, String description) {
     super(title);
     this.description = description;
   }

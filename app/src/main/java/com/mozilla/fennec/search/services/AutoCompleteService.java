@@ -3,6 +3,8 @@ package com.mozilla.fennec.search.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.mozilla.fennec.search.agents.HttpAgent;
@@ -17,6 +19,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javax.xml.transform.Result;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -27,13 +31,14 @@ import de.greenrobot.event.EventBus;
  * helper methods.
  */
 public class AutoCompleteService extends IntentService {
+  public static final String RESULTS = "com.mozilla.fennec.search.extra.RESULTS";
+  public static final int STATUS_OK = 0;
   // TODO: Rename actions, choose action names that describe tasks that this
   // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
   private static final String ACTION_GET_AUTO_COMPLETE_SUGGESTIONS =
       "com.mozilla.fennec.search.action.ACTION_GET_AUTO_COMPLETE_SUGGESTIONS";
-
-  // TODO: Rename parameters
   private static final String QUERY_STRING = "com.mozilla.fennec.search.extra.QUERY_STRING";
+  private static final String RESULT_RECEIVER = "com.mozilla.fennec.search.extra.RESULT_RECEIVER";
 
   public AutoCompleteService() {
     super("AutoCompleteService");
@@ -46,10 +51,11 @@ public class AutoCompleteService extends IntentService {
    * @see IntentService
    */
   // TODO: Customize helper method
-  public static void startSearch(Context context, String queryString) {
+  public static void startSearch(Context context, String queryString, ResultReceiver receiver) {
     Intent intent = new Intent(context, AutoCompleteService.class);
     intent.setAction(ACTION_GET_AUTO_COMPLETE_SUGGESTIONS);
     intent.putExtra(QUERY_STRING, queryString);
+    intent.putExtra(RESULT_RECEIVER, receiver);
     context.startService(intent);
   }
 
@@ -59,7 +65,8 @@ public class AutoCompleteService extends IntentService {
       final String action = intent.getAction();
       if (ACTION_GET_AUTO_COMPLETE_SUGGESTIONS.equals(action)) {
         final String queryString = intent.getStringExtra(QUERY_STRING);
-        handleAutoCompleteSearch(queryString);
+        final ResultReceiver receiver = intent.getParcelableExtra(RESULT_RECEIVER);
+        handleAutoCompleteSearch(queryString, receiver);
       }
     }
   }
@@ -68,7 +75,7 @@ public class AutoCompleteService extends IntentService {
    * Handle action Foo in the provided background thread with the provided
    * parameters.
    */
-  private void handleAutoCompleteSearch(String queryString) {
+  private void handleAutoCompleteSearch(String queryString, ResultReceiver receiver) {
 
     URI uri;
     try {
@@ -96,10 +103,10 @@ public class AutoCompleteService extends IntentService {
     }
 
     if (responseJs.length() == 2) {
-      LinkedList<String> response = new LinkedList<String>();
+      ArrayList<String> response = new ArrayList<String>();
       try {
         JSONArray matches = responseJs.getJSONArray(1);
-        int tot = Math.min(3, matches.length());
+        int tot =matches.length();
         for (int i = 0; i < tot; i++) {
           response.add(matches.getString(i));
         }
@@ -108,9 +115,9 @@ public class AutoCompleteService extends IntentService {
         return;
       }
 
-      EventBus.getDefault().post(new AutoCompleteChangedEvent(new ArrayList<String>(
-          response
-      )));
+      Bundle results = new Bundle();
+      results.putStringArrayList(RESULTS, response);
+      receiver.send(STATUS_OK, results);
 
     }
 

@@ -42,6 +42,10 @@ public class BaseCard<M extends CardModel> implements IsCard<M> {
     return R.layout.card_base;
   }
 
+  protected Activity getActivity() {
+    return mActivity;
+  }
+
   @Override
   public void ingest(M model) {
 

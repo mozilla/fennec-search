@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.mozilla.fennec.search.R;
 import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.cards.EntityCard;
+import com.mozilla.fennec.search.cards.IsCard;
 import com.mozilla.fennec.search.cards.RestaurantCard;
 import com.mozilla.fennec.search.cards.RowCard;
 import com.mozilla.fennec.search.cards.TitleCard;
@@ -17,7 +18,7 @@ import com.mozilla.fennec.search.cards.WeatherCard;
 import com.mozilla.fennec.search.models.BasicCardModel;
 import com.mozilla.fennec.search.models.CardModel;
 import com.mozilla.fennec.search.models.entity.EntityModel;
-import com.mozilla.fennec.search.models.restaurant.RestaurantModel;
+import com.mozilla.fennec.search.models.restaurant.RestaurantList;
 import com.mozilla.fennec.search.models.weather.WeatherModel;
 
 import java.io.IOException;
@@ -26,8 +27,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-
-import de.greenrobot.event.EventBus;
 
 public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
 
@@ -49,22 +48,22 @@ public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
   @Override
   protected void onPostExecute(T result) {
     CardModel model = createCardModel(result);
+    IsCard card = null;
+
     if (model instanceof WeatherModel) {
-      WeatherCard card = new WeatherCard(mActivity);
-      card.ingest((WeatherModel) model);
-      mCardSink.addCard(card);
+      card = new WeatherCard(mActivity);
+      card.ingest(model);
+
     } else if (model instanceof BasicCardModel) {
-      TitleCard card = new TitleCard(mActivity);
-      card.setTitle(((BasicCardModel) model).getTitle());
-      card.setBody(((BasicCardModel) model).getDescription());
-      card.setCardTag(((BasicCardModel) model).getTitle());
-      EventBus.getDefault().post(card);
-    } else if (model instanceof RestaurantModel) {
-      RestaurantCard card = new RestaurantCard(mActivity);
-      card.ingest((RestaurantModel) model);
-      EventBus.getDefault().post(card);
+      card = new TitleCard(mActivity);
+      ((TitleCard) card).setTitle(((BasicCardModel) model).getTitle());
+      ((TitleCard) card).setBody(((BasicCardModel) model).getDescription());
+      ((TitleCard) card).setCardTag(((BasicCardModel) model).getTitle());
+    } else if (model instanceof RestaurantList) {
+      card = new RestaurantCard(mActivity);
+      card.ingest(model);
     } else if (model instanceof WikipediaAgent.WikipediaRowModel) {
-      RowCard<WikipediaAgent.WikipediaRow> card =
+      card =
           new RowCard<WikipediaAgent.WikipediaRow>(mActivity, R.layout.card_multi_result, R.layout.card_multi_result_row) {
 
         @Override
@@ -80,14 +79,15 @@ public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
           });
         }
       };
-      card.ingest((WikipediaAgent.WikipediaRowModel) model);
-      EventBus.getDefault().post(card);
+      card.ingest(model);
 
     } else if (model instanceof EntityModel) {
-      EntityCard card = new EntityCard(mActivity);
+      card = new EntityCard(mActivity);
       card.ingest((EntityModel) model);
-      EventBus.getDefault().post(card);
     }
+
+    if (card != null)
+      mCardSink.addCard(card);
   }
 
   public static String fetchHttp(String myurl) throws IOException {
