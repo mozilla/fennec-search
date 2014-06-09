@@ -1,6 +1,8 @@
-package com.mozilla.fennec.search.models.units;
+package com.mozilla.fennec.search.models.types;
 
-public class Temperature {
+import java.io.Serializable;
+
+public class Temperature implements Serializable {
   private double celsius;
   private static final double NINE_OVER_FIVE = (9.0d / 5.0d);
   private static final double FIVE_OVER_NINE = (5.0d / 9.0d);

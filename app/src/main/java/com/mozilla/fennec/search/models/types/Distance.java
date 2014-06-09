@@ -1,6 +1,8 @@
-package com.mozilla.fennec.search.models.units;
+package com.mozilla.fennec.search.models.types;
 
-public class Distance {
+import java.io.Serializable;
+
+public class Distance implements Serializable{
   private double meters;
   public static Distance fromMeters(double meters) {
     Distance instance = new Distance();
