@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
 
@@ -102,7 +103,7 @@ public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
     try {
       model = createCardModel(result);
     } catch (JSONException e) {
-      Log.e("onPostExecute", e.toString());
+      e.printStackTrace();
       return;
     }
     IsCard card = null;

@@ -29,7 +29,7 @@ public class Query {
     try {
       mQueryString = URLEncoder.encode(query, "utf-8");
     } catch (UnsupportedEncodingException e) {
-      Log.e("Unable to encode query as utf8", query);
+      e.printStackTrace();
       mQueryString = "";
     }
   }

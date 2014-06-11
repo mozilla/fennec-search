@@ -35,11 +35,16 @@ public class DuckDuckGoAgent extends JsonAgent {
 
   @Override
   protected CardModel createCardModel(JsonResponse response) {
+    if (response == null)
+      return null;
 
     try {
       JSONObject responseJs = response.getResponse();
+      if (responseJs == null)
+        return null;
       String responseType = responseJs.getString("Type");
-      Log.i("createCardModel", responseType);
+      if (responseType == null)
+        return null;
       /**
        * Type: response category, i.e.
        *  A (article),
@@ -55,7 +60,7 @@ public class DuckDuckGoAgent extends JsonAgent {
       }
 
     } catch (JSONException e) {
-      Log.e("createCardModel", e.toString());
+      e.printStackTrace();
     }
     return null;
   }

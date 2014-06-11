@@ -47,8 +47,8 @@ public class AutoCompleteService {
             receiver.send(STATUS_OK, results);
           }
 
-        } catch (JSONException e1) {
-          e1.printStackTrace();
+        } catch (JSONException e) {
+          e.printStackTrace();
         }
 
 

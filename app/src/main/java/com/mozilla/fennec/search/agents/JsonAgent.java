@@ -28,7 +28,7 @@ public abstract class JsonAgent extends HttpAgent<JsonResponse> {
     try {
       json = new JSONObject(jsonStr);
     } catch (JSONException e) {
-      Log.e("JsonParseError", e.toString());
+      e.printStackTrace();
       return JsonResponse.failure("Failed to parse JSON response.");
     }
 

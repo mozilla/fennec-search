@@ -351,7 +351,7 @@ public class CardStreamLinearLayout extends LinearLayout {
             mAnimators = (CardStreamAnimator) getClass().getClassLoader()
                 .loadClass(animatorName).newInstance();
         } catch (Exception e) {
-          Log.e(TAG, "Fail to load animator:" + animatorName, e);
+          e.printStackTrace();
         } finally {
           if (mAnimators == null)
             mAnimators = new DefaultCardStreamAnimator();

@@ -76,7 +76,7 @@ public class FlickrService extends AsyncTask<Query, Void, String> {
       List<String> urls = getUrls(fetch(buildUrl(queries[0])));
       return urls.size() > 0 ? urls.get(0) : null;
     } catch (JSONException e) {
-      Log.e("doInBackground", e.toString());
+      e.printStackTrace();
       return "";
     }
   }

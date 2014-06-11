@@ -55,6 +55,9 @@ public class ForecastIoAgent extends JsonAgent {
   }
 
   private WeatherModel initWeatherObject(JSONObject apiResponse) {
+    if (apiResponse == null) {
+      return null;
+    }
     WeatherModel model = null;
     try {
       JSONObject currentStatus = apiResponse.getJSONObject("currently");
@@ -63,7 +66,7 @@ public class ForecastIoAgent extends JsonAgent {
       model = new WeatherModel(currentTemp, currentCondition);
 
     } catch (JSONException e) {
-      LOGGER.log(Level.SEVERE, "jsonMemberError", e);
+      e.printStackTrace();
     }
     return model;
   }
@@ -95,7 +98,7 @@ public class ForecastIoAgent extends JsonAgent {
         model.pushForecast(builder.createWeatherForecast());
       }
     } catch (JSONException e) {
-      LOGGER.log(Level.SEVERE, "jsonMemberError", e);
+      e.printStackTrace();
     }
 
   }
@@ -103,7 +106,11 @@ public class ForecastIoAgent extends JsonAgent {
   @Override
   protected WeatherModel createCardModel(JsonResponse response) {
     JSONObject apiResponse = response.getResponse();
+    if (apiResponse == null)
+      return null;
     WeatherModel model = initWeatherObject(apiResponse);
+    if (model == null)
+      return null;
     pushForecasts(model, apiResponse);
     return model;
   }

@@ -80,6 +80,7 @@ public class YelpAgent extends JsonAgent {
       }
 
     } catch (JSONException e) {
+      e.printStackTrace();
       return null;
     }
     return model;

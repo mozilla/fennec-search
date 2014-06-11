@@ -41,6 +41,7 @@ public class WikipediaAgent extends JsonAgent {
       }
       return model;
     } catch (JSONException e) {
+      e.printStackTrace();
       return null;
     }
   }

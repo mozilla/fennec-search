@@ -45,14 +45,10 @@ public class YqlReverseGeocodeAgent extends JsonAgent {
   protected CardModel createCardModel(JsonResponse response) {
     try {
       JSONObject jsAddr = response.getResponse().getJSONObject("query").getJSONObject("results").getJSONObject("Result");
-      Log.i("city", jsAddr.getString("city"));
-      Log.i("state", jsAddr.getString("state"));
-      Log.i("neighborhood", jsAddr.getString("neighborhood"));
-      Log.i("woeid", jsAddr.getString("woeid"));
+
     } catch (JSONException e) {
-      Log.e("createCardModel", e.toString());
+      e.printStackTrace();
     }
-    Log.i("Yql", response.getResponse().toString());
     return null;
   }
 }
