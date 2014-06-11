@@ -24,6 +24,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +43,7 @@ import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.cards.IsCard;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends Activity implements AcceptsCard {
@@ -53,11 +55,14 @@ public class MainActivity extends Activity implements AcceptsCard {
   private String mCurrentQuery;
   private ArrayList<IsCard> cards;
 
+  private List<AsyncTask> startedTasks;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     cards = new ArrayList<IsCard>();
     setContentView(R.layout.activity_main);
+
 
     FragmentManager fm = getFragmentManager();
     mCardManager = (CardStreamStateManager) fm.findFragmentByTag(STREAM_TAG);
@@ -75,6 +80,12 @@ public class MainActivity extends Activity implements AcceptsCard {
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     setIntent(intent);
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    startedTasks = new ArrayList<AsyncTask>();
   }
 
   @Override
@@ -110,20 +121,20 @@ public class MainActivity extends Activity implements AcceptsCard {
 
   }
 
-
   @Override
   public void onStop() {
     super.onStop();
     mLocationManager = null;
     mCurrentLocation = null;
+
+    for (AsyncTask task : startedTasks) {
+      task.cancel(true);
+    }
+    startedTasks = null;
   }
 
   private void doSearch() {
     mCardManager.deleteAllCards();
-
-    JsonAgent weatherAgent = new ForecastIoAgent(this, this);
-    weatherAgent.runAsync(new Query(mCurrentLocation));
-
 
   }
 
@@ -132,15 +143,19 @@ public class MainActivity extends Activity implements AcceptsCard {
 
     FlickrService flickr = new FlickrService(this, (ImageView) findViewById(R.id.hero));
     flickr.execute(new Query(queryString, mCurrentLocation));
+    startedTasks.add(flickr);
 
     JsonAgent ddgAgent = new DuckDuckGoAgent(this, this);
     ddgAgent.runAsync(new Query(queryString));
+    startedTasks.add(ddgAgent);
 
     JsonAgent yelpAgent = new YelpAgent(this, this);
     yelpAgent.runAsync(new Query(queryString, mCurrentLocation));
+    startedTasks.add(yelpAgent);
 
     JsonAgent wikipediaAgent = new WikipediaAgent(this, this);
     wikipediaAgent.runAsync(new Query(queryString, mCurrentLocation));
+    startedTasks.add(wikipediaAgent);
 
   }
 

@@ -29,9 +29,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.concurrent.Executor;
 
 public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
-
 
   private Activity mActivity;
   private AcceptsCard mCardSink;
@@ -87,7 +87,7 @@ public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
   }
 
   public void runAsync(Query query) {
-    this.execute(query);
+    this.executeOnExecutor(THREAD_POOL_EXECUTOR , query);
   }
 
   protected abstract T doInBackground(Query... queries);

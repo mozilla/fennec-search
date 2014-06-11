@@ -42,11 +42,10 @@ import com.mozilla.fennec.search.cards.IsCard;
 public class CardStreamStateManager extends Fragment {
 
   private static final int INITIAL_SIZE = 15;
-  private CardStreamLinearLayout mLayout = null;
   private LinkedHashMap<String, IsCard> mVisibleCards = new LinkedHashMap<String, IsCard>(INITIAL_SIZE);
   private HashMap<String, IsCard> mHiddenCards = new HashMap<String, IsCard>(INITIAL_SIZE);
   private HashSet<String> mDismissibleCards = new HashSet<String>(INITIAL_SIZE);
-
+  private CardStreamLinearLayout mLayout = null;
   // Set the listener to handle dismissed cards by moving them to the hidden cards map.
   private CardStreamLinearLayout.OnDissmissListener mCardDismissListener =
       new CardStreamLinearLayout.OnDissmissListener() {
@@ -164,7 +163,8 @@ public class CardStreamStateManager extends Fragment {
     if (card != null && mLayout != null) {
       // Card is visible, also remove from layout
       mVisibleCards.remove(tag);
-      mLayout.removeView(card.getView());
+      if (mLayout != null)
+        mLayout.removeView(card.getView());
       return true;
     } else {
       // Card is hidden, no need to remove from layout
@@ -181,7 +181,7 @@ public class CardStreamStateManager extends Fragment {
     ViewParent parent = mLayout.getParent();
 
     if (parent != null && parent instanceof ScrollView) {
-      ((ScrollView) parent).scrollTo(0,0);
+      ((ScrollView) parent).scrollTo(0, 0);
     }
     return true;
   }

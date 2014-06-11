@@ -64,6 +64,12 @@ public class AutoCompleteFragment extends Fragment {
   }
 
   public void setResults(List<String> results) {
+    // There are instances when this is getting called
+    // after the fragment has already been destroyed.
+    // It seems to happen when popping items from the
+    // back stack at a high rate.
+    if (rowPool == null)
+      return;
     int numResults = Math.min(results.size(), MAX_ROWS);
     for (int i = 0; i < numResults; i++) {
       rowPool.get(i).setText(results.get(i));
