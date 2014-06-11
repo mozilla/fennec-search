@@ -3,26 +3,14 @@ package com.mozilla.fennec.search;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mozilla.fennec.search.agents.JsonResponse;
-import com.mozilla.fennec.search.agents.YelpAgent;
-import com.mozilla.fennec.search.cards.RestaurantCard;
-import com.mozilla.fennec.search.models.RowModel;
 import com.mozilla.fennec.search.models.restaurant.RestaurantModel;
 import com.squareup.picasso.Picasso;
 import com.yelp.api.Yelp;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class RichResultActivity extends Activity {
@@ -48,9 +36,10 @@ public class RichResultActivity extends Activity {
 
   private void display(final RestaurantModel model) {
 
-    Picasso.with(RichResultActivity.this)
-        .load(model.getImage().toString())
-        .into((ImageView) findViewById(R.id.hero));
+    if (model.getImage() != null)
+      Picasso.with(RichResultActivity.this)
+          .load(model.getImage().toString())
+          .into((ImageView) findViewById(R.id.hero));
 
     Picasso.with(RichResultActivity.this)
         .load(model.getRatingImage().toString())

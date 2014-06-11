@@ -36,6 +36,7 @@ public class AutoCompleteActivity extends Activity {
 
   private static final String AUTO_COMPLETE_FRAGMENT = "com.mozilla.fennec.search.SearchActivity.AUTO_COMPLETE_FRAGMENT";
 
+  private final AutoCompleteService autoCompleteService = new AutoCompleteService();
   private enum State {
     WAITING, RUNNING
   }
@@ -99,8 +100,10 @@ public class AutoCompleteActivity extends Activity {
   public void onEventMainThread(AutoCompleteSelectEvent event) {
     String query = event.getQuery();
     if (query != null) {
+      state = State.WAITING;
       searchInput.setText(query);
       searchInput.setSelection(query.length());
+
       Intent searchIntent = new Intent(AutoCompleteActivity.this, MainActivity.class);
       searchIntent.putExtra(QUERY, query);
       startActivity(searchIntent);
@@ -145,7 +148,7 @@ public class AutoCompleteActivity extends Activity {
         timer.schedule(new TimerTask() {
           @Override
           public void run() {
-            AutoCompleteService.startSearch(AutoCompleteActivity.this, charSequence.toString(), mReceiver);
+            autoCompleteService.search(charSequence.toString(), mReceiver);
           }
         }, 500);
       }
@@ -178,7 +181,7 @@ public class AutoCompleteActivity extends Activity {
     });
   }
 
-  private class AutoCompleteReceiver extends ResultReceiver {
+  public class AutoCompleteReceiver extends ResultReceiver {
 
     public AutoCompleteReceiver(Handler handler) {
       super(handler);

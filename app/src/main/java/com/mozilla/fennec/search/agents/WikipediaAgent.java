@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import com.mozilla.fennec.search.R;
 import com.mozilla.fennec.search.cards.AcceptsCard;
-import com.mozilla.fennec.search.models.RowModel;
+import com.mozilla.fennec.search.models.RowListModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,14 +25,7 @@ public class WikipediaAgent extends JsonAgent {
     String url =
         String.format("http://en.wikipedia.org/w/api.php?action=opensearch&search=%s",
             query.getQueryString());
-    Log.i("url", url);
-    try {
-      Log.i("Start fetch", url);
-      return String.format("{\"results\":%s}", fetchHttp(url));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
+    return String.format("{\"results\":%s}", fetchHttp(url));
   }
 
   @Override
@@ -69,9 +63,9 @@ public class WikipediaAgent extends JsonAgent {
     }
   }
 
-  public class WikipediaRowModel extends RowModel<WikipediaRow> {
+  public class WikipediaRowModel extends RowListModel<WikipediaRow> {
     public WikipediaRowModel() {
-      super("Wikipedia");
+      super("Wikipedia", R.drawable.wikipedia);
     }
   }
 }

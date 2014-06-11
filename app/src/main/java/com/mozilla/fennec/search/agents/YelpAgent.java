@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.mozilla.fennec.search.Configuration;
+import com.mozilla.fennec.search.R;
 import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.models.restaurant.RestaurantList;
 import com.mozilla.fennec.search.models.restaurant.RestaurantModel;
@@ -40,7 +41,7 @@ public class YelpAgent extends JsonAgent {
 
   @Override
   protected RestaurantList createCardModel(JsonResponse response) {
-    RestaurantList model = new RestaurantList("Yelp");
+    RestaurantList model = new RestaurantList("Yelp", R.drawable.yelp);
     try {
       JSONArray results = response.getResponse().getJSONArray("businesses");
       if (results.length() == 0)
@@ -58,8 +59,9 @@ public class YelpAgent extends JsonAgent {
               .setImage(new URI(result.getString("image_url").replace("ms.jpg", "o.jpg")));
         }
 
+        if (result.has("display_phone"))
+          builder.setPhoneNumber(result.getString("display_phone"));
         if (result.has("rating_img_url_large"))
-
           builder.setRatingImage(new URI(result.getString("rating_img_url_large")));
         if (result.has("snippet_text"))
           builder.setSnippet(result.getString("snippet_text"));
@@ -104,7 +106,7 @@ public class YelpAgent extends JsonAgent {
       builder.setZip(addressJson.getString("postal_code"));
 
     if (addressJson.has("country_code"))
-      builder.setCity(addressJson.getString("country_code"));
+      builder.setCountry(addressJson.getString("country_code"));
 
     return builder.createAddress();
   }

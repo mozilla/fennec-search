@@ -21,7 +21,8 @@ public class RestaurantCard extends RowCard<RestaurantModel> {
     ((TextView) rowView.findViewById(R.id.restaurantName)).setText(rowModel.getName());
     ((TextView) rowView.findViewById(R.id.distance)).setText(rowModel.getDistance().getKiloMeterString());
     ImageView imgView = (ImageView) rowView.findViewById(R.id.thumbnail);
-    Picasso.with(mActivity).load(rowModel.getThumbnailImage().toString()).into(imgView);
+    if (rowModel.getThumbnailImage() != null)
+      Picasso.with(mActivity).load(rowModel.getThumbnailImage().toString()).into(imgView);
     rowView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {

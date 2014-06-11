@@ -1,49 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context=".MainActivity"
-              tools:ignore="MergeRootFrame">
-
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/search_input"
-        android:onClick="onSearchClick"
-        android:clickable="false">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_action_search"/>
-
-        <TextView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/fake_search_box"
-            android:layout_gravity="center_horizontal"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imageView"
-            android:layout_marginLeft="20dp"/>
-
-
-    </RelativeLayout>
+            android:layout_height="match_parent"
+    >
 
     <LinearLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        tools:context=".MainActivity"
         tools:ignore="MergeRootFrame">
-    </LinearLayout>
 
-</LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/hero"
+                android:src="@drawable/stadium_hero"
+                android:scaleType="centerCrop"/>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/search_input"
+                android:onClick="onSearchClick"
+                android:clickable="false">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/ic_action_search_dark"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fake_search_box"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imageView"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="#fff"/>
+
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:ignore="MergeRootFrame">
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

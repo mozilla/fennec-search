@@ -3,11 +3,12 @@ package com.mozilla.fennec.search.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RowModel<T> extends TitleCardModel implements HasRows<T> {
+public class RowListModel<T> extends TitleCardModel implements HasRows<T> {
   private List<T> mRows;
 
-  public RowModel(String title) {
-    super(title);
+
+  public RowListModel(String title, int iconDrawable) {
+    super(title, iconDrawable);
     mRows = new ArrayList<T>();
   }
 

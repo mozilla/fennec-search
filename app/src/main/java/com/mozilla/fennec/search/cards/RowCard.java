@@ -5,16 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mozilla.fennec.search.R;
-import com.mozilla.fennec.search.models.RowModel;
+import com.mozilla.fennec.search.models.RowListModel;
 
-public abstract class RowCard<T> extends TitleCard<RowModel<T>> {
+public abstract class RowCard<T> extends TitleCard<RowListModel<T>> {
   private final ViewGroup mBody;
-  private int mBodyLayout;
   private int mRowLayout;
 
   public RowCard(Activity activity, int bodyLayout, int rowLayout) {
     super(activity);
-    mBodyLayout = bodyLayout;
     mRowLayout = rowLayout;
 
     mBody = (ViewGroup) activity.getLayoutInflater().inflate(bodyLayout,
@@ -23,7 +21,7 @@ public abstract class RowCard<T> extends TitleCard<RowModel<T>> {
   }
 
   @Override
-  public void ingest(RowModel<T> model) {
+  public void ingest(RowListModel<T> model) {
     super.ingest(model);
 
     View rowView;
@@ -38,5 +36,8 @@ public abstract class RowCard<T> extends TitleCard<RowModel<T>> {
 
   protected abstract void populateRowView(View rowView, T rowModel);
 
+  protected ViewGroup getBody() {
+    return mBody;
+  }
 
 }

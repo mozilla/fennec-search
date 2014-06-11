@@ -51,13 +51,7 @@ public class ForecastIoAgent extends JsonAgent {
     String url =
         String.format("https://api.forecast.io/forecast/28a2e15ab413e47a7bad54c04763813f/%f,%f?units=si",
             query.getLatitude(), query.getLongitude());
-    try {
-
-      return fetchHttp(url);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return "";
+    return fetchHttp(url);
   }
 
   private WeatherModel initWeatherObject(JSONObject apiResponse) {

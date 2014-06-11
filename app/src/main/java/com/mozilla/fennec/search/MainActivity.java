@@ -27,10 +27,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.cardstream.CardStreamStateManager;
 import com.mozilla.fennec.search.agents.DuckDuckGoAgent;
+import com.mozilla.fennec.search.services.FlickrService;
 import com.mozilla.fennec.search.agents.ForecastIoAgent;
 import com.mozilla.fennec.search.agents.JsonAgent;
 import com.mozilla.fennec.search.agents.Query;
@@ -70,7 +72,13 @@ public class MainActivity extends Activity implements AcceptsCard {
   }
 
   @Override
-  public void onStart() {
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    setIntent(intent);
+  }
+
+  @Override
+  public void onResume() {
     super.onStart();
 
     Log.i("MainActivity", "onStart");
@@ -81,18 +89,19 @@ public class MainActivity extends Activity implements AcceptsCard {
     // TODO: Add test for disabled GPS.
     mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
+
     if (cards.isEmpty()) {
+
       if (getIntent().hasExtra(AutoCompleteActivity.QUERY)) {
         String query = getIntent().getStringExtra(AutoCompleteActivity.QUERY);
+        Log.i("New search start", query);
         doSearch(query);
-        ((TextView)findViewById(R.id.fake_search_box)).setText(query);
+        ((TextView) findViewById(R.id.fake_search_box)).setText(query);
         mCurrentQuery = query;
-      }
-      else {
+      } else {
         doSearch();
-        ((TextView)findViewById(R.id.fake_search_box)).setText("");
+        ((TextView) findViewById(R.id.fake_search_box)).setText("");
       }
-
     } else {
       for (IsCard card : cards) {
         addCard(card);
@@ -100,6 +109,7 @@ public class MainActivity extends Activity implements AcceptsCard {
     }
 
   }
+
 
   @Override
   public void onStop() {
@@ -114,10 +124,14 @@ public class MainActivity extends Activity implements AcceptsCard {
     JsonAgent weatherAgent = new ForecastIoAgent(this, this);
     weatherAgent.runAsync(new Query(mCurrentLocation));
 
+
   }
 
   private void doSearch(String queryString) {
     mCardManager.deleteAllCards();
+
+    FlickrService flickr = new FlickrService(this, (ImageView) findViewById(R.id.hero));
+    flickr.execute(new Query(queryString, mCurrentLocation));
 
     JsonAgent ddgAgent = new DuckDuckGoAgent(this, this);
     ddgAgent.runAsync(new Query(queryString));
@@ -127,6 +141,7 @@ public class MainActivity extends Activity implements AcceptsCard {
 
     JsonAgent wikipediaAgent = new WikipediaAgent(this, this);
     wikipediaAgent.runAsync(new Query(queryString, mCurrentLocation));
+
   }
 
   public void addCard(IsCard card) {

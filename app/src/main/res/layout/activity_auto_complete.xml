@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:layout_margin="10dp"
-        android:background="@drawable/search_input"
+        android:background="@drawable/search_input_dedicated"
         tools:context="com.mozilla.fennec.search.AutoCompleteActivity">
 
         <ImageView
@@ -41,7 +41,6 @@
             android:layout_gravity="center_vertical|right"
             style="?android:attr/borderlessButtonStyle"
             android:src="@drawable/ic_action_remove"
-            android:textAlignment="center"
             android:textSize="30sp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"

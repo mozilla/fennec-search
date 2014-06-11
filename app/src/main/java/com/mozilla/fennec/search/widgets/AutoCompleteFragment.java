@@ -65,7 +65,7 @@ public class AutoCompleteFragment extends Fragment {
 
   public void setResults(List<String> results) {
     int numResults = Math.min(results.size(), MAX_ROWS);
-    for (int i = 0; i < MAX_ROWS; i++) {
+    for (int i = 0; i < numResults; i++) {
       rowPool.get(i).setText(results.get(i));
     }
   }

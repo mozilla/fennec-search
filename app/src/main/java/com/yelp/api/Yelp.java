@@ -56,4 +56,12 @@ public class Yelp {
     return response.getBody();
   }
 
+  public String fetch(String yelpId) {
+    String url = "http://api.yelp.com/v2/business/" + yelpId;
+    OAuthRequest request = new OAuthRequest(Verb.GET, url);
+    this.service.signRequest(this.accessToken, request);
+    Response response = request.send();
+    return response.getBody();
+  }
+
 }

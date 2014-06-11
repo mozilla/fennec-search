@@ -9,12 +9,14 @@ public class EntityModel implements HasTitle {
   private String mTitle;
   private String mDescription;
   private Uri mReference;
+  private int mIconDrawable;
 
-  public EntityModel(Uri thumbnail, String title, String description, Uri reference) {
+  public EntityModel(Uri thumbnail, String title, String description, Uri reference, int icon) {
     this.mThumbnail = thumbnail;
     this.mTitle = title;
     this.mDescription = description;
     this.mReference = reference;
+    this.mIconDrawable = icon;
   }
 
   public Uri getThumbnail() {
@@ -37,5 +39,15 @@ public class EntityModel implements HasTitle {
   @Override
   public void setTitle(String title) {
     mTitle = title;
+  }
+
+  @Override
+  public int getIcon() {
+    return mIconDrawable;
+  }
+
+  @Override
+  public void setIcon(int icon) {
+    mIconDrawable = icon;
   }
 }

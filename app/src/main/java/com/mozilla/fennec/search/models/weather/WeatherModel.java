@@ -3,6 +3,7 @@ package com.mozilla.fennec.search.models.weather;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.mozilla.fennec.search.R;
 import com.mozilla.fennec.search.models.TitleCardModel;
 import com.mozilla.fennec.search.models.types.Temperature;
 
@@ -15,7 +16,7 @@ public class WeatherModel extends TitleCardModel {
   private List<WeatherForecast> forecast;
 
   public WeatherModel(Temperature currentTemperature, WeatherConditions currentCondition) {
-    super("Weather");
+    super("Weather", R.drawable.dark_sky);
     this.currentTemperature = currentTemperature;
     this.currentCondition = currentCondition;
     this.forecast = new ArrayList<WeatherForecast>();
