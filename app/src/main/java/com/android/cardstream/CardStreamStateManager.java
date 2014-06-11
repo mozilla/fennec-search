@@ -161,7 +161,7 @@ public class CardStreamStateManager extends Fragment {
   public boolean removeCard(String tag) {
     // Attempt to remove a visible card first
     IsCard card = mVisibleCards.get(tag);
-    if (card != null) {
+    if (card != null && mLayout != null) {
       // Card is visible, also remove from layout
       mVisibleCards.remove(tag);
       mLayout.removeView(card.getView());
@@ -206,7 +206,7 @@ public class CardStreamStateManager extends Fragment {
   public boolean showCard(String tag, boolean dismissible) {
     final IsCard card = mHiddenCards.get(tag);
     // ensure the card is hidden and not already visible
-    if (card != null && !mVisibleCards.containsValue(tag)) {
+    if (card != null && mLayout != null && !mVisibleCards.containsValue(tag)) {
       mHiddenCards.remove(tag);
       mVisibleCards.put(tag, card);
       mLayout.addCard(card.getView(), dismissible);
