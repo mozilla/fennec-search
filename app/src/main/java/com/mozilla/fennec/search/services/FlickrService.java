@@ -84,11 +84,11 @@ public class FlickrService extends AsyncTask<Query, Void, String> {
   @Override
   protected void onPostExecute(String s) {
     if (s == null || s.isEmpty()) {
-      Picasso.with(activity).load(R.drawable.stadium_hero).into(dest);
+      Picasso.with(activity).load(R.drawable.hero_sun).into(dest);
     } else {
       Picasso.with(activity).load(s)
-          .placeholder(R.drawable.stadium_hero)
-          .error(R.drawable.stadium_hero).resize(360, 200).centerCrop().into(dest);
+          .placeholder(R.drawable.hero_sun)
+          .error(R.drawable.hero_sun).resize(360, 200).centerCrop().into(dest);
     }
 
   }

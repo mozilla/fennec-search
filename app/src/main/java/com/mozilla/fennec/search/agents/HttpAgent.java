@@ -15,13 +15,11 @@ import com.mozilla.fennec.search.cards.IsCard;
 import com.mozilla.fennec.search.cards.RestaurantCard;
 import com.mozilla.fennec.search.cards.RowCard;
 import com.mozilla.fennec.search.cards.TitleCard;
-import com.mozilla.fennec.search.cards.WeatherCard;
 import com.mozilla.fennec.search.models.BasicCardModel;
 import com.mozilla.fennec.search.models.CardModel;
 import com.mozilla.fennec.search.models.disambiguation.DisambiguationModel;
 import com.mozilla.fennec.search.models.entity.EntityModel;
 import com.mozilla.fennec.search.models.restaurant.RestaurantList;
-import com.mozilla.fennec.search.models.weather.WeatherModel;
 
 import org.json.JSONException;
 
@@ -31,7 +29,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
 
@@ -111,11 +108,7 @@ public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
     if (model == null)
       return;
 
-    if (model instanceof WeatherModel) {
-      card = new WeatherCard(mActivity);
-      card.ingest(model);
-
-    } else if (model instanceof BasicCardModel) {
+   if (model instanceof BasicCardModel) {
       card = new TitleCard(mActivity);
       ((TitleCard) card).setTitle(((BasicCardModel) model).getTitle());
       ((TitleCard) card).setBody(((BasicCardModel) model).getDescription());
