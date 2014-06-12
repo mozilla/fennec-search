@@ -40,9 +40,9 @@ public class FlickrService extends AsyncTask<Query, Void, String> {
     builder.appendQueryParameter("format", "json");
     builder.appendQueryParameter("extras", "url_z");
     builder.appendQueryParameter("nojsoncallback", "1");
-    builder.appendQueryParameter("lat", String.valueOf(query.getLatitude()));
-    builder.appendQueryParameter("lon", String.valueOf(query.getLongitude()));
-    builder.appendQueryParameter("per_page", "15");
+//    builder.appendQueryParameter("lat", String.valueOf(query.getLatitude()));
+//    builder.appendQueryParameter("lon", String.valueOf(query.getLongitude()));
+    builder.appendQueryParameter("per_page", "5");
 
     return builder.build().toString();
   }
@@ -83,12 +83,13 @@ public class FlickrService extends AsyncTask<Query, Void, String> {
 
   @Override
   protected void onPostExecute(String s) {
+
     if (s == null || s.isEmpty()) {
-      Picasso.with(activity).load(R.drawable.hero_sun).into(dest);
+      Picasso.with(activity).load(R.drawable.hero_blank).into(dest);
     } else {
       Picasso.with(activity).load(s)
-          .placeholder(R.drawable.hero_sun)
-          .error(R.drawable.hero_sun).resize(360, 200).centerCrop().into(dest);
+          .placeholder(R.drawable.hero_blank)
+          .error(R.drawable.hero_blank).resize(360, 200).centerCrop().into(dest);
     }
 
   }
