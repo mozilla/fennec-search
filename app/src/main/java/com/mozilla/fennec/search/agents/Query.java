@@ -18,7 +18,11 @@ public class Query {
   }
 
   public Query(String query, Location location) {
-    this(query, location.getLatitude(), location.getLongitude());
+    this(query);
+    if (location != null) {
+      mLatitude = location.getLatitude();
+      mLongitude = location.getLongitude();
+    }
   }
 
   public Query(Location location) {
