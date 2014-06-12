@@ -12,5 +12,6 @@
         android:layout_height="wrap_content"
         android:text="\u2196"
         android:id="@+id/jumpButton"
-        style="?android:attr/borderlessButtonStyle" />
+        style="@style/ButtonBorderless"
+        />
 </merge>

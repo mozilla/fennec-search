@@ -66,8 +66,13 @@ public class CardStreamLinearLayout extends LinearLayout {
     private float mDownX;
     private float mDownY;
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onTouch(final View v, MotionEvent event) {
+
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+        return false;
+      }
 
       switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
@@ -129,35 +134,6 @@ public class CardStreamLinearLayout extends LinearLayout {
   };
   private int mSwipeSlop = -1;
 
-  /**
-   * Handle a hierarchy change event
-   * when a new child is added, scroll to bottom and hide action area..
-   */
-//  private OnHierarchyChangeListener mOnHierarchyChangeListener
-//      = new OnHierarchyChangeListener() {
-//    @Override
-//    public void onChildViewAdded(final View parent, final View child) {
-//
-//      Log.d(TAG, "child is added: " + child);
-//
-//      ViewParent scrollView = parent.getParent();
-//      if (scrollView != null && scrollView instanceof ScrollView) {
-//        ((ScrollView) scrollView).fullScroll(FOCUS_DOWN);
-//      }
-//
-//      if (getLayoutTransition() != null) {
-//        View view = child.findViewById(R.id.card_actionarea);
-//        if (view != null)
-//          view.setAlpha(0.f);
-//      }
-//    }
-//
-//    @Override
-//    public void onChildViewRemoved(View parent, View child) {
-//      Log.d(TAG, "child is removed: " + child);
-//      mFixedViewList.remove(child);
-//    }
-//  };
   private int mLastDownX;
 
   public CardStreamLinearLayout(Context context) {
@@ -202,7 +178,6 @@ public class CardStreamLinearLayout extends LinearLayout {
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
     super.onLayout(changed, l, t, r, b);
@@ -242,6 +217,11 @@ public class CardStreamLinearLayout extends LinearLayout {
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   protected void swipeView(View child, float deltaX, float deltaY) {
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return;
+    }
+
     if (isFixedView(child)) {
       deltaX = deltaX / 4;
     }
@@ -321,7 +301,6 @@ public class CardStreamLinearLayout extends LinearLayout {
     mDismissListener = listener;
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void initialize(AttributeSet attrs, int defStyle) {
 
     float speedFactor = 1.f;
@@ -376,7 +355,11 @@ public class CardStreamLinearLayout extends LinearLayout {
     return mFixedViewList.contains(v);
   }
 
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void resetAnimatedView(View child) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return;
+    }
     child.setAlpha(1.f);
     child.setTranslationX(0.f);
     child.setTranslationY(0.f);
@@ -387,8 +370,13 @@ public class CardStreamLinearLayout extends LinearLayout {
     child.setScaleY(1.f);
   }
 
-
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
   private void runShowActionAreaAnimation(View parent, View area) {
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return;
+    }
+
     area.setPivotY(0.f);
     area.setPivotX(parent.getWidth() / 2.f);
 
@@ -397,7 +385,11 @@ public class CardStreamLinearLayout extends LinearLayout {
     area.animate().rotationX(0.f).alpha(1.f).setDuration(400);
   }
 
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void handleViewSwipingOut(final View child, float deltaX, float deltaY) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return;
+    }
     ObjectAnimator animator = mAnimators.getSwipeOutAnimator(child, deltaX, deltaY);
     if (animator != null) {
       animator.addListener(new EndAnimationWrapper() {
@@ -418,7 +410,11 @@ public class CardStreamLinearLayout extends LinearLayout {
     }
   }
 
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
   private void handleViewSwipingIn(final View child, float deltaX, float deltaY) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return;
+    }
     ObjectAnimator animator = mAnimators.getSwipeInAnimator(child, deltaX, deltaY);
     if (animator != null) {
       animator.addListener(new EndAnimationWrapper() {
@@ -463,6 +459,7 @@ public class CardStreamLinearLayout extends LinearLayout {
   /**
    * Empty default AnimationListener
    */
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private abstract class EndAnimationWrapper implements Animator.AnimatorListener {
 
     @Override

@@ -19,13 +19,14 @@ package com.mozilla.fennec.search;
 
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends Activity implements AcceptsCard {
+public class MainActivity extends FragmentActivity implements AcceptsCard {
 
   private static final String STREAM_TAG = "STREAM_WIDGET";
   private CardStreamStateManager mCardManager;
@@ -64,7 +65,7 @@ public class MainActivity extends Activity implements AcceptsCard {
     setContentView(R.layout.activity_main);
 
 
-    FragmentManager fm = getFragmentManager();
+    FragmentManager fm = getSupportFragmentManager();
     mCardManager = (CardStreamStateManager) fm.findFragmentByTag(STREAM_TAG);
 
     if (mCardManager == null) {
@@ -152,10 +153,6 @@ public class MainActivity extends Activity implements AcceptsCard {
     JsonAgent yelpAgent = new YelpAgent(this, this);
     yelpAgent.runAsync(new Query(queryString, mCurrentLocation));
     startedTasks.add(yelpAgent);
-
-    JsonAgent wikipediaAgent = new WikipediaAgent(this, this);
-    wikipediaAgent.runAsync(new Query(queryString, mCurrentLocation));
-    startedTasks.add(wikipediaAgent);
 
   }
 

@@ -16,7 +16,7 @@
             android:src="@drawable/ic_action_back"
             android:id="@+id/back_button"
             android:onClick="onBackArrow"
-            style="@android:style/Widget.Holo.Button.Borderless"
+            style="@style/ButtonBorderless"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
@@ -115,7 +115,7 @@
             android:layout_height="wrap_content">
 
             <ImageButton
-                style="@android:style/Widget.Holo.Button.Borderless"
+                style="@style/ButtonBorderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/call_button"
@@ -123,7 +123,7 @@
                 android:src="@drawable/ic_action_call"/>
 
             <ImageButton
-                style="@android:style/Widget.Holo.Button.Borderless"
+                style="@style/ButtonBorderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/map_button"
@@ -131,7 +131,7 @@
                 android:src="@drawable/ic_action_place"/>
 
             <ImageButton
-                style="@android:style/Widget.Holo.Button.Borderless"
+                style="@style/ButtonBorderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/yelp_button"

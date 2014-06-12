@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/clear_button"
             android:layout_gravity="center_vertical|right"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/ButtonBorderless"
             android:src="@drawable/ic_action_remove"
             android:textSize="30sp"
             android:layout_centerVertical="true"

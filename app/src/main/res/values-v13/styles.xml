@@ -1,5 +1,7 @@
 <resources>
 
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light.NoActionBar" />
+
     <!-- Card Stream -->
     <style name="CardStream">
         <item name="android:paddingBottom">@dimen/card_stream_bottom_padding</item>
@@ -29,6 +31,10 @@
     <style name="CardContent" parent="@style/CardElement">
         <item name="android:textSize">@dimen/card_content_text</item>
         <item name="android:textColor">@color/card_content_textcolor</item>
+    </style>
+
+    <style name="ButtonBorderless">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
 </resources>

@@ -3,6 +3,7 @@ package com.mozilla.fennec.search.agents;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -87,7 +88,13 @@ public abstract class HttpAgent<T> extends AsyncTask<Query, Void, T> {
   }
 
   public void runAsync(Query query) {
-    this.executeOnExecutor(THREAD_POOL_EXECUTOR , query);
+    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
+      this.executeOnExecutor(THREAD_POOL_EXECUTOR, query);
+    }
+    else {
+      this.execute(query);
+    }
+
   }
 
   protected abstract T doInBackground(Query... queries);

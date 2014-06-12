@@ -15,8 +15,6 @@
 */
 
 
-
-
 package com.android.cardstream;
 
 import android.animation.ObjectAnimator;
@@ -31,94 +29,105 @@ import android.view.animation.BounceInterpolator;
 
 class DefaultCardStreamAnimator extends CardStreamAnimator {
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    @Override
-    public ObjectAnimator getDisappearingAnimator(Context context){
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  @Override
+  public ObjectAnimator getDisappearingAnimator(Context context) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return null;
+    }
+    ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),
+        PropertyValuesHolder.ofFloat("alpha", 1.f, 0.f),
+        PropertyValuesHolder.ofFloat("scaleX", 1.f, 0.f),
+        PropertyValuesHolder.ofFloat("scaleY", 1.f, 0.f),
+        PropertyValuesHolder.ofFloat("rotation", 0.f, 270.f));
 
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),
-                PropertyValuesHolder.ofFloat("alpha", 1.f, 0.f),
-                PropertyValuesHolder.ofFloat("scaleX", 1.f, 0.f),
-                PropertyValuesHolder.ofFloat("scaleY", 1.f, 0.f),
-                PropertyValuesHolder.ofFloat("rotation", 0.f, 270.f));
+    animator.setDuration((long) (200 * mSpeedFactor));
+    return animator;
+  }
 
-        animator.setDuration((long) (200 * mSpeedFactor));
-        return animator;
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+  @Override
+  public ObjectAnimator getAppearingAnimator(Context context) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return null;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    @Override
-    public ObjectAnimator getAppearingAnimator(Context context){
+    final Point outPoint = new Point();
+    WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    wm.getDefaultDisplay().getSize(outPoint);
 
-        final Point outPoint = new Point();
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getSize(outPoint);
+    ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),
+        PropertyValuesHolder.ofFloat("alpha", 0.f, 1.f),
+        PropertyValuesHolder.ofFloat("translationY", outPoint.y / 2.f, 0.f),
+        PropertyValuesHolder.ofFloat("rotation", -45.f, 0.f));
 
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),
-                PropertyValuesHolder.ofFloat("alpha", 0.f, 1.f),
-                PropertyValuesHolder.ofFloat("translationY", outPoint.y / 2.f, 0.f),
-                PropertyValuesHolder.ofFloat("rotation", -45.f, 0.f));
+    animator.setDuration((long) (200 * mSpeedFactor));
+    return animator;
+  }
 
-        animator.setDuration((long) (200 * mSpeedFactor));
-        return animator;
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  @Override
+  public ObjectAnimator getInitalAnimator(Context context) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return null;
     }
+    ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),
+        PropertyValuesHolder.ofFloat("alpha", 0.5f, 1.f),
+        PropertyValuesHolder.ofFloat("rotation", 60.f, 0.f));
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    @Override
-    public ObjectAnimator getInitalAnimator(Context context){
+    animator.setDuration((long) (200 * mSpeedFactor));
+    return animator;
+  }
 
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(new Object(),
-                PropertyValuesHolder.ofFloat("alpha", 0.5f, 1.f),
-                PropertyValuesHolder.ofFloat("rotation", 60.f, 0.f));
-
-        animator.setDuration((long) (200 * mSpeedFactor));
-        return animator;
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  @Override
+  public ObjectAnimator getSwipeInAnimator(View view, float deltaX, float deltaY) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return null;
     }
+    float deltaXAbs = Math.abs(deltaX);
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    @Override
-    public ObjectAnimator getSwipeInAnimator(View view, float deltaX, float deltaY){
+    float fractionCovered = 1.f - (deltaXAbs / view.getWidth());
+    long duration = Math.abs((int) ((1 - fractionCovered) * 200 * mSpeedFactor));
 
-        float deltaXAbs = Math.abs(deltaX);
+    // Animate position and alpha of swiped item
 
-        float fractionCovered = 1.f - (deltaXAbs / view.getWidth());
-        long duration = Math.abs((int) ((1 - fractionCovered) * 200 * mSpeedFactor));
+    ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(view,
+        PropertyValuesHolder.ofFloat("alpha", 1.f),
+        PropertyValuesHolder.ofFloat("translationX", 0.f),
+        PropertyValuesHolder.ofFloat("rotationY", 0.f));
 
-        // Animate position and alpha of swiped item
+    animator.setDuration(duration).setInterpolator(new BounceInterpolator());
 
-        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(view,
-                PropertyValuesHolder.ofFloat("alpha", 1.f),
-                PropertyValuesHolder.ofFloat("translationX", 0.f),
-                PropertyValuesHolder.ofFloat("rotationY", 0.f));
+    return animator;
+  }
 
-        animator.setDuration(duration).setInterpolator(new BounceInterpolator());
-
-        return  animator;
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  @Override
+  public ObjectAnimator getSwipeOutAnimator(View view, float deltaX, float deltaY) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      return null;
     }
+    float endX;
+    float endRotationY;
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    @Override
-    public ObjectAnimator getSwipeOutAnimator(View view, float deltaX, float deltaY){
+    float deltaXAbs = Math.abs(deltaX);
 
-        float endX;
-        float endRotationY;
+    float fractionCovered = 1.f - (deltaXAbs / view.getWidth());
+    long duration = Math.abs((int) ((1 - fractionCovered) * 200 * mSpeedFactor));
 
-        float deltaXAbs = Math.abs(deltaX);
+    endX = deltaX < 0 ? -view.getWidth() : view.getWidth();
+    if (deltaX > 0)
+      endRotationY = -15.f;
+    else
+      endRotationY = 15.f;
 
-        float fractionCovered = 1.f - (deltaXAbs / view.getWidth());
-        long duration = Math.abs((int) ((1 - fractionCovered) * 200 * mSpeedFactor));
+    // Animate position and alpha of swiped item
+    return ObjectAnimator.ofPropertyValuesHolder(view,
+        PropertyValuesHolder.ofFloat("alpha", 0.f),
+        PropertyValuesHolder.ofFloat("translationX", endX),
+        PropertyValuesHolder.ofFloat("rotationY", endRotationY)).setDuration(duration);
 
-        endX = deltaX < 0 ? -view.getWidth() : view.getWidth();
-        if (deltaX > 0)
-            endRotationY = -15.f;
-        else
-            endRotationY = 15.f;
-
-        // Animate position and alpha of swiped item
-        return ObjectAnimator.ofPropertyValuesHolder(view,
-                PropertyValuesHolder.ofFloat("alpha", 0.f),
-                PropertyValuesHolder.ofFloat("translationX", endX),
-                PropertyValuesHolder.ofFloat("rotationY", endRotationY)).setDuration(duration);
-
-    }
+  }
 
 }

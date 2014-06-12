@@ -1,12 +1,12 @@
 package com.mozilla.fennec.search;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -26,7 +26,7 @@ import java.util.TimerTask;
 import de.greenrobot.event.EventBus;
 
 
-public class AutoCompleteActivity extends Activity {
+public class AutoCompleteActivity extends FragmentActivity {
 
   private EditText searchInput;
   private ResultReceiver mReceiver;
@@ -57,7 +57,7 @@ public class AutoCompleteActivity extends Activity {
 
     mReceiver = new AutoCompleteReceiver(new Handler());
 
-    FragmentManager fm = getFragmentManager();
+    FragmentManager fm = getSupportFragmentManager();
 
     mAutoCompleteFragment = (AutoCompleteFragment) fm.findFragmentByTag(AUTO_COMPLETE_FRAGMENT);
 
