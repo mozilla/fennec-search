@@ -18,7 +18,6 @@
 package com.mozilla.fennec.search;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -34,14 +33,12 @@ import android.widget.TextView;
 
 import com.android.cardstream.CardStreamStateManager;
 import com.mozilla.fennec.search.agents.DuckDuckGoAgent;
-import com.mozilla.fennec.search.services.FlickrService;
-import com.mozilla.fennec.search.agents.ForecastIoAgent;
 import com.mozilla.fennec.search.agents.JsonAgent;
 import com.mozilla.fennec.search.agents.Query;
-import com.mozilla.fennec.search.agents.WikipediaAgent;
 import com.mozilla.fennec.search.agents.YelpAgent;
 import com.mozilla.fennec.search.cards.AcceptsCard;
 import com.mozilla.fennec.search.cards.IsCard;
+import com.mozilla.fennec.search.services.FlickrService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +52,10 @@ public class MainActivity extends FragmentActivity implements AcceptsCard {
   private LocationManager mLocationManager;
   private String mCurrentQuery;
   private ArrayList<IsCard> cards;
+
+  // Used to decide whether to create a new search,
+  // or go back to the previous search.
+  private boolean mCameFromInternalSearch = false;
 
   private List<AsyncTask> startedTasks;
 
@@ -106,12 +107,17 @@ public class MainActivity extends FragmentActivity implements AcceptsCard {
 
       if (getIntent().hasExtra(AutoCompleteActivity.QUERY)) {
         String query = getIntent().getStringExtra(AutoCompleteActivity.QUERY);
-        Log.i("New search start", query);
         doSearch(query);
+
+        // If we start listening to external intents that supply a query,
+        // then setting this variable will require an additional check of
+        // *where* the user came from.
+        mCameFromInternalSearch = true;
         ((TextView) findViewById(R.id.fake_search_box)).setText(query);
         mCurrentQuery = query;
       } else {
         doSearch();
+        mCameFromInternalSearch = false;
         ((TextView) findViewById(R.id.fake_search_box)).setText("");
       }
     } else {
@@ -183,6 +189,9 @@ public class MainActivity extends FragmentActivity implements AcceptsCard {
   }
 
   public void onSearchClick(View view) {
-    startAutoComplete(mCurrentQuery);
+    if (mCameFromInternalSearch)
+      onBackPressed();
+    else
+      startAutoComplete(mCurrentQuery);
   }
 }
