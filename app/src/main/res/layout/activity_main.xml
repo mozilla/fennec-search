@@ -22,7 +22,7 @@
                 android:layout_width="360dp"
                 android:layout_height="200dp"
                 android:id="@+id/hero"
-                android:src="@drawable/hero_sun"
+                android:src="@drawable/hero_blank"
                 android:scaleType="centerCrop"/>
 
             <RelativeLayout
@@ -30,9 +30,9 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/search_input"
                 android:onClick="onSearchClick"
-                android:clickable="false">
+                android:clickable="false"
+                android:background="@drawable/search_input">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -49,8 +49,16 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/imageView"
-                    android:layout_marginLeft="20dp"
-                    android:textColor="#fff"/>
+                    android:layout_marginLeft="12dp"
+                    android:textColor="#fff"
+                    android:text="Search"
+                    android:shadowColor="#000"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="20"
+                    android:singleLine="true"
+                    android:textSize="26sp"
+                    android:paddingLeft="8dp"/>
 
 
             </RelativeLayout>
