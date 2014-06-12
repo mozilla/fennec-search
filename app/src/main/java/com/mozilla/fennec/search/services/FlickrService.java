@@ -36,7 +36,7 @@ public class FlickrService extends AsyncTask<Query, Void, String> {
     builder.appendQueryParameter("api_key", Configuration.FLICKR_KEY);
     builder.appendQueryParameter("sort", "interestingness-desc");
     builder.appendQueryParameter("method", "flickr.photos.search");
-    builder.appendQueryParameter("text", query.getQueryString());
+    builder.appendQueryParameter("tags", query.getQueryString());
     builder.appendQueryParameter("format", "json");
     builder.appendQueryParameter("extras", "url_z");
     builder.appendQueryParameter("nojsoncallback", "1");

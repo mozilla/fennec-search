@@ -26,8 +26,10 @@ public class EntityCard extends TitleCard<EntityModel> {
   public void ingest(final EntityModel model) {
     super.ingest(model);
 
-    ImageView imgView = (ImageView) mBody.findViewById(R.id.thumbnail);
-    Picasso.with(mActivity).load(model.getThumbnail().toString()).into(imgView);
+    if (!model.getThumbnail().toString().isEmpty()) {
+      ImageView imgView = (ImageView) mBody.findViewById(R.id.thumbnail);
+      Picasso.with(mActivity).load(model.getThumbnail().toString()).into(imgView);
+    }
 
     ((TextView) mBody.findViewById(R.id.description)).setText(model.getDescription());
 

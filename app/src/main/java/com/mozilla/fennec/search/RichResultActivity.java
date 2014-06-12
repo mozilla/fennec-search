@@ -41,9 +41,10 @@ public class RichResultActivity extends Activity {
           .load(model.getImage().toString())
           .into((ImageView) findViewById(R.id.hero));
 
-    Picasso.with(RichResultActivity.this)
-        .load(model.getRatingImage().toString())
-        .into((ImageView) findViewById(R.id.rating_stars));
+    if (model.getRatingImage() != null)
+      Picasso.with(RichResultActivity.this)
+          .load(model.getRatingImage().toString())
+          .into((ImageView) findViewById(R.id.rating_stars));
 
     ((TextView) findViewById(R.id.name)).setText(model.getName());
     ((TextView) findViewById(R.id.snippet)).setText(model.getAddress().getStreet());
@@ -83,9 +84,7 @@ public class RichResultActivity extends Activity {
           startActivity(intent);
         }
       });
-    }
-
-    else
+    } else
       findViewById(R.id.call_button).setVisibility(View.GONE);
 
   }
