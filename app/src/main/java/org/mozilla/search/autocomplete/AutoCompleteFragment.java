@@ -23,6 +23,10 @@ import android.widget.TextView;
 
 import org.mozilla.search.R;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * A fragment to handle autocomplete. Its interface with the outside
  * world should be very very limited.
@@ -40,7 +44,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
   private ListView mSuggestionDropdown;
   private InputMethodManager mInputMethodManager;
   private AutoCompleteAdapter mAutoCompleteAdapter;
-  private AutoCompleteAgent mAutoCompleteAgent;
+  private AutoCompleteAgentManager mAutoCompleteAgentManager;
   private State mState;
 
   private enum State {
@@ -79,7 +83,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
       @Override
       public void afterTextChanged(Editable s) {
-        mAutoCompleteAgent.search(s.toString());
+        mAutoCompleteAgentManager.search(s.toString());
       }
     });
     mSearchBar.setOnEditorActionListener(this);
@@ -104,7 +108,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
     initRows();
 
-    mAutoCompleteAgent = new AutoCompleteAgent(getActivity(), new MainUiHandler(mAutoCompleteAdapter));
+    mAutoCompleteAgentManager = new AutoCompleteAgentManager(getActivity(), new MainUiHandler(mAutoCompleteAdapter));
 
     // This will hide the autocomplete box and background frame.
     // Is there a case where we *shouldn't* hide this upfront?
@@ -218,7 +222,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
     mSearchBar.setText(suggestion);
     // Move cursor to end of search input.
     mSearchBar.setSelection(suggestion.length());
-    mAutoCompleteAgent.search(suggestion);
+    mAutoCompleteAgentManager.search(suggestion);
   }
 
 
@@ -240,19 +244,9 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         return;
 
       mAutoCompleteAdapter.clear();
-      String[] res = (String[]) msg.obj;
-      int firstPass = Math.min(mAutoCompleteAdapter.getCount(), res.length);
-      for (int i = 0; i < firstPass; i++) {
-        mAutoCompleteAdapter.getItem(i).setMainText(res[i]);
-
+      for (AutoCompleteModel model : (ArrayList<AutoCompleteModel>)  msg.obj) {
+        mAutoCompleteAdapter.add(model);
       }
-
-      if (res.length > mAutoCompleteAdapter.getCount()) {
-        for (int i = firstPass; i < res.length; i++) {
-          mAutoCompleteAdapter.add(new AutoCompleteModel(res[i]));
-        }
-      }
-
       mAutoCompleteAdapter.notifyDataSetChanged();
 
     }

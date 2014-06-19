@@ -30,12 +30,6 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
     // Gets an instance of the support library FragmentManager
     FragmentManager localFragmentManager = getSupportFragmentManager();
 
-    /*
-     * Adds the back stack change listener defined in this Activity as the listener for the
-     * FragmentManager. See the method onBackStackChanged().
-     */
-    localFragmentManager.addOnBackStackChangedListener(this);
-
     // If the incoming state of the Activity is null, sets the initial view to be thumbnails
     if (null == stateBundle) {
 
@@ -68,6 +62,7 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
 
   @Override
   public void onSearch(String s) {
-    Log.i("Incoming search", s);
+    ((CardStreamFragment)getSupportFragmentManager().findFragmentByTag(Constants
+        .CARD_STREAM_FRAGMENT)).handleSearch(s);
   }
 }

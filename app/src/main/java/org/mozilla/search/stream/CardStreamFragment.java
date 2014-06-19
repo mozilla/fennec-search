@@ -1,5 +1,7 @@
 package org.mozilla.search.stream;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -23,12 +25,12 @@ public class CardStreamFragment extends ListFragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    ArrayAdapter<TemporaryData.DummyItem> adapter = new ArrayAdapter<TemporaryData.DummyItem>(getActivity(),
-        R.layout.card, R.id.card_title, TemporaryData.ITEMS) {
+    ArrayAdapter<PreloadAgent.TmpItem> adapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(),
+        R.layout.card, R.id.card_title, PreloadAgent.ITEMS) {
 
       /**
-       * Return false here disables the ListView from handling the click events
-       * for each of the items.
+       * Return false here disables the ListView from highlighting the click events
+       * for each of the items. Each card should handle its own click events.
        */
       @Override
       public boolean isEnabled(int position) {
@@ -51,11 +53,16 @@ public class CardStreamFragment extends ListFragment {
     super.onDetach();
   }
 
-
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
     super.onListItemClick(l, v, position, id);
-
   }
 
+  public void handleSearch(String s) {
+
+    String url = "https://search.yahoo.com/search?p=" + s;
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    startActivity(i);
+  }
 }

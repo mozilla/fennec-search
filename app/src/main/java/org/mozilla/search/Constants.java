@@ -6,4 +6,5 @@ public class Constants {
 
 
   public final static int NUM_AUTO_COMPLETE_RESULTS = 4;
+  public static final String LIMIT = "5";
 }

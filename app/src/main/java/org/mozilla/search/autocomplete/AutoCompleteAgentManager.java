@@ -1,36 +1,39 @@
 package org.mozilla.search.autocomplete;
 
+import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
-import org.mozilla.search.Constants;
+import java.util.ArrayList;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-public class AutoCompleteAgent {
+public class AutoCompleteAgentManager {
 
   HandlerThread mThread;
   Handler mMainUiHandler;
   Handler mHandler;
-  WordList wordList;
+  AutoCompleteWordListAgent mAutoCompleteWordListAgent;
 
-  public AutoCompleteAgent(Context context, Handler mainUiHandler) {
+  public AutoCompleteAgentManager(Activity activity, Handler mainUiHandler) {
     mThread = new HandlerThread("org.mozilla.search.autocomplete.SuggestionAgent");
     // TODO: Where to kill this thread?
     mThread.start();
+    Log.i("AUTOCOMPLETE", "Starting thread");
     mMainUiHandler = mainUiHandler;
     mHandler = new SuggestionMessageHandler(mThread.getLooper());
-    wordList = new WordList(context);
+    mAutoCompleteWordListAgent = new AutoCompleteWordListAgent(activity);
+    mAutoCompleteWordListAgent.dbIsReady();
   }
 
   /**
    * Process the next incoming query.
    */
   public void search(String queryString) {
+
     // TODO check if there's a pending search.. not sure how to handle that.
     mHandler.sendMessage(mHandler.obtainMessage(0, queryString));
   }
@@ -52,29 +55,20 @@ public class AutoCompleteAgent {
       if (null == msg.obj)
         return;
 
-      String s = ((String) msg.obj).toLowerCase();
+      Cursor cursor = mAutoCompleteWordListAgent.getWordMatches(((String) msg.obj).toLowerCase(),
+          null);
+      ArrayList<AutoCompleteModel> res = new ArrayList<AutoCompleteModel>();
 
-      int firstMatch = Arrays.binarySearch(wordList.getWordList(), s, new Comparator<String>() {
-        @Override
-        public int compare(String lhs, String rhs) {
-          if (lhs.startsWith(rhs)) {
-            return 0;
-          }
-          return lhs.compareTo(rhs);
-        }
-      });
+      if (null == cursor)
+        return;
 
-      // If there's a match, return the results to the main thread.
-      if (firstMatch >= 0 && firstMatch < WordList.mWordList.length) {
-        String[] res = new String[Constants.NUM_AUTO_COMPLETE_RESULTS];
-        for (int i = 0; i < res.length; i++) {
-          res[i] = wordList.getWordList()[i + firstMatch];
-        }
-        mMainUiHandler.sendMessage(Message.obtain(mMainUiHandler, 0,
-            res));
+      for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+        res.add(new AutoCompleteModel(
+            cursor.getString(cursor.getColumnIndex(AutoCompleteWordListAgent.COL_WORD))));
       }
 
 
+      mMainUiHandler.sendMessage(Message.obtain(mMainUiHandler, 0, res));
     }
 
   }

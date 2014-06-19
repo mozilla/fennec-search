@@ -4,7 +4,7 @@ android {
     compileSdkVersion 17
     buildToolsVersion '19.1.0'
     defaultConfig {
-        applicationId 'org.mozilla.firefoxsearch'
+        applicationId 'org.mozilla.search'
         minSdkVersion 9
         targetSdkVersion 17
         versionCode 1
@@ -23,4 +23,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:19.+'
+    compile 'com.android.support:support-v4:19.+'
+    compile 'com.squareup.picasso:picasso:2.3+'
+    compile 'org.jsoup:jsoup:1.7.2'
+
 }
