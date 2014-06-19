@@ -1,3 +1,5 @@
-*.class
-FennecSearch/build/*
-FennecSearch/app/src/main/java/com/mozilla/fennec/search/Configuration.java
+.gradle
+/local.properties
+/.idea/workspace.xml
+.DS_Store
+/build
