@@ -12,9 +12,8 @@ public class PreloadAgent {
   public static Map<String, TmpItem> ITEM_MAP = new HashMap<String, TmpItem>();
 
   static {
-    for (int i = 0; i < 200; i++) {
-      addItem(new TmpItem(String.valueOf(i), "Item " + String.valueOf(i)));
-    }
+    addItem(new TmpItem("1", "Pre-load item"));
+    addItem(new TmpItem("2", "Pre-load item"));
   }
 
   private static void addItem(TmpItem item) {

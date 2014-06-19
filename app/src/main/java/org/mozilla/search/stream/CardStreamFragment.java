@@ -29,25 +29,16 @@ public class CardStreamFragment extends ListFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View rootView = super.onCreateView(inflater, container, savedInstanceState);
-    mHeaderView = (ImageView) inflater.inflate(R.layout.stream_header, null);
-    return rootView;
-  }
-
-  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     getListView().setDivider(null);
   }
 
-
-
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-
-    getListView().addHeaderView(mHeaderView);
+    mHeaderView = (ImageView) getLayoutInflater(savedInstanceState).inflate(R.layout.stream_header, null);
+    getListView().addHeaderView(mHeaderView, null, false);
     if (null == mAdapter) {
       mAdapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(),
           R.layout.card, R.id.card_title, PreloadAgent.ITEMS) {

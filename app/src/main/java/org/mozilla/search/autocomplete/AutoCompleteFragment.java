@@ -23,9 +23,7 @@ import android.widget.TextView;
 
 import org.mozilla.search.R;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * A fragment to handle autocomplete. Its interface with the outside
@@ -112,13 +110,16 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
     // This will hide the autocomplete box and background frame.
     // Is there a case where we *shouldn't* hide this upfront?
-    transitionToWaiting();
+
+    // Uncomment show card stream first.
+    // transitionToWaiting();
+    transitionToRunning();
 
     // Attach listener for tapping on a suggestion.
     mSuggestionDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String query = ((AutoCompleteModel)mSuggestionDropdown.getItemAtPosition(position)).getMainText();
+        String query = ((AutoCompleteModel) mSuggestionDropdown.getItemAtPosition(position)).getMainText();
         startSearch(query);
       }
     });
@@ -170,10 +171,10 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
   private void initRows() {
     // TODO: Query history for these items.
-    mAutoCompleteAdapter.add(new AutoCompleteModel("mozilla"));
-    mAutoCompleteAdapter.add(new AutoCompleteModel("kittens"));
-    mAutoCompleteAdapter.add(new AutoCompleteModel("pho sf"));
-    mAutoCompleteAdapter.add(new AutoCompleteModel("arrested development"));
+    mAutoCompleteAdapter.add(new AutoCompleteModel("banana"));
+    mAutoCompleteAdapter.add(new AutoCompleteModel("cat pics"));
+    mAutoCompleteAdapter.add(new AutoCompleteModel("mexican food"));
+    mAutoCompleteAdapter.add(new AutoCompleteModel("cuba libre"));
 
     mAutoCompleteAdapter.notifyDataSetChanged();
   }
@@ -187,7 +188,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
       mSearchBar.setText(queryString);
       mSearchBar.setSelection(queryString.length());
       transitionToWaiting();
-      ((AcceptsSearchQuery)getActivity()).onSearch(queryString);
+      ((AcceptsSearchQuery) getActivity()).onSearch(queryString);
     } else {
       throw new RuntimeException("Parent activity does not implement AcceptsSearchQuery.");
     }
@@ -244,7 +245,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         return;
 
       mAutoCompleteAdapter.clear();
-      for (AutoCompleteModel model : (ArrayList<AutoCompleteModel>)  msg.obj) {
+      for (AutoCompleteModel model : (ArrayList<AutoCompleteModel>) msg.obj) {
         mAutoCompleteAdapter.add(model);
       }
       mAutoCompleteAdapter.notifyDataSetChanged();
