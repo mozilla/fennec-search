@@ -4,15 +4,22 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+
+import com.squareup.picasso.Picasso;
 
 import org.mozilla.search.R;
 
 
 public class CardStreamFragment extends ListFragment {
 
+  private ImageView mHeaderView;
+  private ArrayAdapter<PreloadAgent.TmpItem> mAdapter;
 
   /**
    * Mandatory empty constructor for the fragment manager to instantiate the
@@ -22,31 +29,42 @@ public class CardStreamFragment extends ListFragment {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    ArrayAdapter<PreloadAgent.TmpItem> adapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(),
-        R.layout.card, R.id.card_title, PreloadAgent.ITEMS) {
-
-      /**
-       * Return false here disables the ListView from highlighting the click events
-       * for each of the items. Each card should handle its own click events.
-       */
-      @Override
-      public boolean isEnabled(int position) {
-        return false;
-      }
-    };
-    setListAdapter(adapter);
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View rootView = super.onCreateView(inflater, container, savedInstanceState);
+    mHeaderView = (ImageView) inflater.inflate(R.layout.stream_header, null);
+    return rootView;
   }
 
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    // Remove horizontal line between each card.
     getListView().setDivider(null);
   }
+
+
+
+  @Override
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+
+    getListView().addHeaderView(mHeaderView);
+    if (null == mAdapter) {
+      mAdapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(),
+          R.layout.card, R.id.card_title, PreloadAgent.ITEMS) {
+        /**
+         * Return false here disables the ListView from highlighting the click events
+         * for each of the items. Each card should handle its own click events.
+         */
+        @Override
+        public boolean isEnabled(int position) {
+          return false;
+        }
+      };
+    }
+
+    setListAdapter(mAdapter);
+  }
+
 
   @Override
   public void onDetach() {
