@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="websockets">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/FirefoxSearch/geckoView/unspecified/libs/websockets.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

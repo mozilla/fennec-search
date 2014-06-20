@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="webrtc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/FirefoxSearch/geckoView/unspecified/libs/webrtc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,19 +1,21 @@
 package org.mozilla.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 
+import org.mozilla.gecko.GeckoView;
+import org.mozilla.gecko.GeckoViewChrome;
+import org.mozilla.gecko.GeckoViewContent;
 import org.mozilla.search.autocomplete.AcceptsSearchQuery;
 import org.mozilla.search.autocomplete.AutoCompleteFragment;
 import org.mozilla.search.stream.CardStreamFragment;
 
 
-public class MainActivity extends FragmentActivity implements AcceptsSearchQuery, FragmentManager
-    .OnBackStackChangedListener {
+public class MainActivity extends FragmentActivity implements AcceptsSearchQuery {
 
   private View mMainView;
 
@@ -23,6 +25,7 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
 
     // Inflates the main View, which will be the host View for the fragments
     mMainView = getLayoutInflater().inflate(R.layout.activity_main, null);
+
 
     // Sets the content view for the Activity
     setContentView(mMainView);
@@ -55,14 +58,14 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
     }
   }
 
-  @Override
-  public void onBackStackChanged() {
-
-  }
 
   @Override
   public void onSearch(String s) {
-    ((CardStreamFragment)getSupportFragmentManager().findFragmentByTag(Constants
-        .CARD_STREAM_FRAGMENT)).handleSearch(s);
+
+    Intent i = new Intent(this, DetailActivity.class);
+    i.putExtra(DetailActivity.URL_MESSAGE, s);
+    startActivity(i);
+
+
   }
 }

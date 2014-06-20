@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
+import org.mozilla.search.DetailActivity;
 import org.mozilla.search.R;
 
 
@@ -71,6 +72,7 @@ public class CardStreamFragment extends ListFragment {
 
     String url = "https://search.yahoo.com/search?p=" + s;
     Intent i = new Intent(Intent.ACTION_VIEW);
+    i.putExtra(DetailActivity.URL_MESSAGE, url);
     i.setData(Uri.parse(url));
     startActivity(i);
   }
