@@ -10,6 +10,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+/**
+ * A single entry point for querying all agents.
+ *
+ * An agent is responsible for querying some underlying data source. It could be a
+ * flat file, or a REST endpoint, or a content provider.
+ */
 class AutoCompleteAgentManager {
 
     private final Handler mMainUiHandler;

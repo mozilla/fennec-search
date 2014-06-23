@@ -5,6 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+/**
+ * The adapter that is used to populate the autocomplete rows.
+ */
 class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteModel> {
 
     private final AcceptsJumpTaps mAcceptsJumpTaps;

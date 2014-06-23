@@ -11,8 +11,16 @@ import org.mozilla.search.autocomplete.AutoCompleteFragment;
 import org.mozilla.search.stream.CardStreamFragment;
 
 
-public class MainActivity extends FragmentActivity implements AcceptsSearchQuery, FragmentManager
-        .OnBackStackChangedListener {
+/**
+ * The main entrance for the Android search intent.
+ * <p/>
+ * State management is delegated to child fragments. Fragments communicate
+ * with each other by passing messages through this activity. The only message passing right
+ * now, the only message passing occurs when a user wants to submit a search query. That
+ * passes through the onSearch method here.
+ */
+public class MainActivity extends FragmentActivity implements AcceptsSearchQuery,
+        FragmentManager.OnBackStackChangedListener {
 
     private DetailActivity mDetailActivity;
 

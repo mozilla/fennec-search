@@ -20,12 +20,10 @@ import java.io.InputStreamReader;
 
 /**
  * Helper to search a word dictionary.
- * <p/>
  * From: https://developer.android.com/training/search/search.html
  */
 class AutoCompleteWordListAgent {
 
-    //The columns we'll include in the dictionary table
     public static final String COL_WORD = "WORD";
     private static final String TAG = "DictionaryDatabase";
     private static final String DATABASE_NAME = "DICTIONARY";
@@ -36,6 +34,9 @@ class AutoCompleteWordListAgent {
 
     public AutoCompleteWordListAgent(Activity activity) {
         mDatabaseOpenHelper = new DatabaseOpenHelper(activity);
+        // DB helper uses lazy initialization, so this forces the db helper to start indexing the
+        // wordlist
+        mDatabaseOpenHelper.getReadableDatabase();
     }
 
     public Cursor getWordMatches(String query) {
@@ -49,7 +50,7 @@ class AutoCompleteWordListAgent {
         builder.setTables(FTS_VIRTUAL_TABLE);
 
         Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
-                null, selection, selectionArgs, null, null, null, Constants.LIMIT);
+                null, selection, selectionArgs, null, null, null, Constants.AUTOCOMPLETE_ROW_LIMIT);
 
         if (cursor == null) {
             return null;
@@ -65,6 +66,9 @@ class AutoCompleteWordListAgent {
         private final Activity mActivity;
 
         private SQLiteDatabase mDatabase;
+
+        private static final String FTS_TABLE_CREATE =
+                "CREATE VIRTUAL TABLE " + FTS_VIRTUAL_TABLE + " USING fts3 (" + COL_WORD + ")";
 
         DatabaseOpenHelper(Activity activity) {
             super(activity, DATABASE_NAME, null, DATABASE_VERSION);
@@ -130,10 +134,7 @@ class AutoCompleteWordListAgent {
                 mDatabase.setTransactionSuccessful();
                 mDatabase.endTransaction();
             }
-        }        private static final String FTS_TABLE_CREATE =
-                "CREATE VIRTUAL TABLE " + FTS_VIRTUAL_TABLE +
-                        " USING fts3 (" +
-                        COL_WORD + ")";
+        }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -142,5 +143,9 @@ class AutoCompleteWordListAgent {
             db.execSQL("DROP TABLE IF EXISTS " + FTS_VIRTUAL_TABLE);
             onCreate(db);
         }
+
+
+
+
     }
 }

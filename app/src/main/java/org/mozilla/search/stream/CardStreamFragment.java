@@ -8,6 +8,11 @@ import android.widget.ArrayAdapter;
 import org.mozilla.search.R;
 
 
+/**
+ * This fragment is responsible for managing the card stream. Right now
+ * we only use this during pre-search, but we could also use it
+ * during post-search at some point.
+ */
 public class CardStreamFragment extends ListFragment {
 
     private ArrayAdapter<PreloadAgent.TmpItem> mAdapter;

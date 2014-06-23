@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import org.mozilla.search.R;
 
+/**
+ * One row withing the autocomplete suggestion list.
+ */
 class AutoCompleteRowView extends LinearLayout {
 
     private TextView mTextView;
