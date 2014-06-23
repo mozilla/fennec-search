@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="sync-thirdparty">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/FirefoxSearch/geckoView/unspecified/libs/sync-thirdparty.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
