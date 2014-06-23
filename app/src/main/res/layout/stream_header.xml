@@ -2,9 +2,9 @@
 
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
            android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:src="@drawable/header"
+           android:layout_height="100dp"
            android:scaleType="centerCrop"
-           >
+           android:src="@drawable/header"
+           android:contentDescription="@string/header_image_content_description">
 
 </ImageView>

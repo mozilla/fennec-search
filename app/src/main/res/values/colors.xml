@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">#498BFE</color>
     <color name="transparent">#00FFFFFF</color>
-
-
-    <color name="card_view_background">#F5F5F5</color>
-
-    <color name="search_bar_border">#999</color>
-    <color name="search_bar_background">#fff</color>
-
-
 
 
 
@@ -18,5 +9,4 @@
     <color name="card_background">#ffffff</color>
     <color name="card_shadow_1">#d4d4d4</color>
     <color name="card_shadow_2">#dddddd</color>
-    <color name="card_detailing">#eee</color>
 </resources>

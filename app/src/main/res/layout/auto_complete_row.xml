@@ -11,7 +11,7 @@
     <TextView
         android:id="@+id/auto_complete_row_text"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_weight="1"/>
@@ -21,6 +21,6 @@
         style="@style/BorderLessButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="\u2196"/>
+        android:text="@string/jump_arrow"/>
 
 </LinearLayout>

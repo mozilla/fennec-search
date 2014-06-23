@@ -2,7 +2,7 @@
 
     <!-- Base application theme. -->
 
-    <style name="AppTheme" parent="@android:style/Theme.Holo.Light.NoActionBar"></style>
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light.NoActionBar"/>
 
 
     <style name="BorderLessButton">

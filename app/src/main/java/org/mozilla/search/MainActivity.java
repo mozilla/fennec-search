@@ -1,71 +1,88 @@
 package org.mozilla.search;
 
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 
-import org.mozilla.gecko.GeckoView;
-import org.mozilla.gecko.GeckoViewChrome;
-import org.mozilla.gecko.GeckoViewContent;
 import org.mozilla.search.autocomplete.AcceptsSearchQuery;
 import org.mozilla.search.autocomplete.AutoCompleteFragment;
 import org.mozilla.search.stream.CardStreamFragment;
 
 
-public class MainActivity extends FragmentActivity implements AcceptsSearchQuery {
+public class MainActivity extends FragmentActivity implements AcceptsSearchQuery, FragmentManager
+        .OnBackStackChangedListener {
 
-  private View mMainView;
+    private DetailActivity mDetailActivity;
 
-  @Override
-  protected void onCreate(Bundle stateBundle) {
-    super.onCreate(stateBundle);
+    @Override
+    protected void onCreate(Bundle stateBundle) {
+        super.onCreate(stateBundle);
 
-    // Inflates the main View, which will be the host View for the fragments
-    mMainView = getLayoutInflater().inflate(R.layout.activity_main, null);
+        // Sets the content view for the Activity
+        setContentView(R.layout.activity_main);
+
+        // Gets an instance of the support library FragmentManager
+        FragmentManager localFragmentManager = getSupportFragmentManager();
+
+        // If the incoming state of the Activity is null, sets the initial view to be thumbnails
+        if (null == stateBundle) {
+
+            // Starts a Fragment transaction to track the stack
+            FragmentTransaction localFragmentTransaction = localFragmentManager
+                    .beginTransaction();
+
+            localFragmentTransaction.add(R.id.header_fragments,
+                    new AutoCompleteFragment(), Constants.AUTO_COMPLETE_FRAGMENT);
+
+            localFragmentTransaction.add(R.id.presearch_fragments,
+                    new CardStreamFragment(), Constants.CARD_STREAM_FRAGMENT);
+
+            // Commits this transaction to display the Fragment
+            localFragmentTransaction.commit();
+
+            // The incoming state of the Activity isn't null.
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
 
-    // Sets the content view for the Activity
-    setContentView(mMainView);
+        if (null == mDetailActivity) {
+            mDetailActivity = new DetailActivity();
+        }
 
-    // Gets an instance of the support library FragmentManager
-    FragmentManager localFragmentManager = getSupportFragmentManager();
+        if (null == getSupportFragmentManager().findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT)) {
+            FragmentTransaction txn = getSupportFragmentManager().beginTransaction();
+            txn.add(R.id.gecko_fragments, mDetailActivity, Constants.GECKO_VIEW_FRAGMENT);
+            txn.hide(mDetailActivity);
 
-    // If the incoming state of the Activity is null, sets the initial view to be thumbnails
-    if (null == stateBundle) {
+            txn.commit();
+        }
+    }
 
-      // Starts a Fragment transaction to track the stack
-      FragmentTransaction localFragmentTransaction = localFragmentManager
-          .beginTransaction();
+    @Override
+    public void onSearch(String s) {
+        FragmentManager localFragmentManager = getSupportFragmentManager();
+        FragmentTransaction localFragmentTransaction = localFragmentManager
+                .beginTransaction();
+
+        localFragmentTransaction.hide(localFragmentManager.findFragmentByTag(Constants.CARD_STREAM_FRAGMENT)).addToBackStack(null);
+
+        localFragmentTransaction.show(localFragmentManager.findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT)).addToBackStack(null);
+
+        localFragmentTransaction.commit();
 
 
-      localFragmentTransaction.add(R.id.fragment_frame,
-          new CardStreamFragment(), Constants.CARD_STREAM_FRAGMENT);
+        ((DetailActivity) getSupportFragmentManager().findFragmentByTag(Constants
+                .GECKO_VIEW_FRAGMENT)).setUrl("https://search.yahoo.com/search?p=" + Uri.encode(s));
+    }
 
-      localFragmentTransaction.add(R.id.fragment_frame,
-          new AutoCompleteFragment(), Constants.AUTO_COMPLETE_FRAGMENT);
-
-
-      // Commits this transaction to display the Fragment
-      localFragmentTransaction.commit();
-
-      // The incoming state of the Activity isn't null.
-    } else {
-
+    @Override
+    public void onBackStackChanged() {
 
     }
-  }
-
-
-  @Override
-  public void onSearch(String s) {
-
-    Intent i = new Intent(this, DetailActivity.class);
-    i.putExtra(DetailActivity.URL_MESSAGE, s);
-    startActivity(i);
-
-
-  }
 }

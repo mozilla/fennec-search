@@ -1,6 +1,6 @@
 package org.mozilla.search.autocomplete;
 
-public interface AcceptsJumpTaps {
+interface AcceptsJumpTaps {
 
-  public void onJumpTap(String suggestion);
+    public void onJumpTap(String suggestion);
 }
