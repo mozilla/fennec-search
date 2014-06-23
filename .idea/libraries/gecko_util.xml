@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="gecko-util">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/FirefoxSearch/geckoView/unspecified/libs/gecko-util.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
