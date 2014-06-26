@@ -17,7 +17,7 @@
 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/card_background"
+        android:background="@drawable/search_card_background"
         android:orientation="vertical"
         >
 

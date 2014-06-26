@@ -21,6 +21,6 @@
         style="@style/BorderLessButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/jump_arrow"/>
+        android:text="@string/search_jump_arrow"/>
 
 </LinearLayout>

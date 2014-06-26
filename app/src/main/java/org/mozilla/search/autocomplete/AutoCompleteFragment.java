@@ -55,7 +55,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
                              Bundle savedInstanceState) {
 
 
-        mMainView = inflater.inflate(R.layout.auto_complete, container, false);
+        mMainView = inflater.inflate(R.layout.search_auto_complete, container, false);
         mBackdropFrame = (FrameLayout) mMainView.findViewById(R.id.auto_complete_backdrop);
         mSearchBar = (EditText) mMainView.findViewById(R.id.auto_complete_search_bar);
         mSuggestionDropdown = (ListView) mMainView.findViewById(R.id.auto_complete_dropdown);

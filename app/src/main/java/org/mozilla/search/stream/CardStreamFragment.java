@@ -33,12 +33,12 @@ public class CardStreamFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        View headerView = getLayoutInflater(savedInstanceState).inflate(R.layout.stream_header,
+        View headerView = getLayoutInflater(savedInstanceState).inflate(R.layout.search_stream_header,
                 getListView(), false);
         getListView().addHeaderView(headerView, null, false);
         if (null == mAdapter) {
             mAdapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(),
-                    R.layout.card, R.id.card_title, PreloadAgent.ITEMS) {
+                    R.layout.search_card, R.id.card_title, PreloadAgent.ITEMS) {
                 /**
                  * Return false here disables the ListView from highlighting the click events
                  * for each of the items. Each card should handle its own click events.

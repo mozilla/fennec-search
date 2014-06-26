@@ -30,7 +30,7 @@ class AutoCompleteRowView extends LinearLayout {
 
         LayoutInflater inflater = (LayoutInflater) getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.auto_complete_row, this, true);
+        inflater.inflate(R.layout.search_auto_complete_row, this, true);
 
         mTextView = (TextView) findViewById(R.id.auto_complete_row_text);
 

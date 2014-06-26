@@ -29,7 +29,7 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
         super.onCreate(stateBundle);
 
         // Sets the content view for the Activity
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.search_activity_main);
 
         // Gets an instance of the support library FragmentManager
         FragmentManager localFragmentManager = getSupportFragmentManager();

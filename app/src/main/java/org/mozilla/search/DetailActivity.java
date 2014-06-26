@@ -22,7 +22,7 @@ public class DetailActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View mainView = inflater.inflate(R.layout.activity_detail, container, false);
+        View mainView = inflater.inflate(R.layout.search_activity_detail, container, false);
 
 
         mGeckoView = (GeckoView) mainView.findViewById(R.id.gecko_view);

@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [
+
+<!-- For standalone running. -->
+<!ENTITY brandShortName "Local Firefox">
+
+<!ENTITY formatS "&#037;s">
+<!ENTITY formatS1 "&#037;1&#036;s">
+<!ENTITY formatS2 "&#037;2&#036;s">
+<!ENTITY formatS3 "&#037;3&#036;s">
+<!ENTITY formatD "&#037;d">
+
+<!-- Search strings. -->
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!ENTITY search_jump_arrow '&#2196;'>
+<!ENTITY search_app_name 'Firefox Search'>
+<!ENTITY search_header_image_content_description 'Firefox Search Header Image'>
+]>
+
 <resources>
-
-    <string name="app_name">Firefox Search</string>
-    <string name="jump_arrow">\u2196</string>
-    <string name="header_image_content_description">Firefox Search Header Image</string>
-
+    <string name="search_app_name">&search_app_name;</string>
+    <string name="search_jump_arrow">&search_jump_arrow;</string>
+    <string name="search_header_image_content_description">&search_header_image_content_description;</string>
 </resources>
