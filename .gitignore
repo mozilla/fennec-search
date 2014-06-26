@@ -19,3 +19,6 @@ proguard.cfg
 build
 app/build
 geckoView/build
+/node_modules/
+/app/src/main/AndroidManifest.xml
+/app/src/main/res/values/strings.xml

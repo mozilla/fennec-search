@@ -1,0 +1,28 @@
+#filter substitution
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.mozilla.search"
+    sharedUserId="@MOZ_ANDROID_SHARED_ID@"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="@ANDROID_TARGET_SDK@" />
+
+#include manifests/SearchAndroidManifest_permissions.xml.in
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="@string/search_app_name">
+
+#include manifests/SearchAndroidManifest_activities.xml.in
+
+#include manifests/SearchAndroidManifest_services.xml.in
+
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+</manifest>

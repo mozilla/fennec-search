@@ -1,0 +1,27 @@
+{
+  "name": "FirefoxSearch",
+  "version": "0.0.0",
+  "description": "Fennec Search Activity",
+  "main": "index.js",
+  "dependencies": {
+    "grunt": "~0.4.5"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-sync": "0.0.7",
+    "load-grunt-tasks": "~0.6.0",
+    "grunt-rsync": "~0.6.1",
+    "grunt-shell": "~0.7.0",
+    "grunt-contrib-clean": "~0.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericedens/FirefoxSearch"
+  },
+  "author": "",
+  "license": "MPLv2",
+  "bugs": {
+    "url": "https://github.com/ericedens/FirefoxSearch/issues"
+  },
+  "homepage": "https://github.com/ericedens/FirefoxSearch"
+}
