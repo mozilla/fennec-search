@@ -1,6 +1,10 @@
-<resources>
+<!--
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  -->
 
-    <!-- Base application theme. -->
+<resources>
 
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light.NoActionBar"/>
 
@@ -8,6 +12,4 @@
     <style name="BorderLessButton">
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
-
-
 </resources>
