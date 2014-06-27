@@ -57,7 +57,7 @@ module.exports = function (grunt) {
             options: {
                 // args: ["--verbose"],
                 recursive: true,
-                syncDestIgnoreExcl: true,
+                syncDest: true,
             },
             main: {
                 options: {
@@ -75,6 +75,20 @@ module.exports = function (grunt) {
                     exclude: ["*strings.xml"],
                 }
             },
+            manifests: {
+                options: {
+                    src: "manifests",
+                    dest: "mobile/android/search/",
+                    exclude: ["AndroidManifest.xml.in"],
+                }
+            },
+            strings: {
+                options: {
+                    src: "strings",
+                    dest: "mobile/android/search/",
+                    exclude: ["strings.xml.in"],
+                }
+            },
         },
 
         preprocess: {
@@ -84,7 +98,7 @@ module.exports = function (grunt) {
 
             manifest: {
                 options: {
-                    src: "AndroidManifest.xml.in",
+                    src: "manifests/AndroidManifest.xml.in",
                     dest: "app/src/main/AndroidManifest.xml",
                 },
             },
