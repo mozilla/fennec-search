@@ -22,18 +22,18 @@ import java.util.ArrayList;
  */
 class AutoCompleteAgentManager {
 
-    private final Handler mMainUiHandler;
-    private final Handler mHandler;
-    private final AutoCompleteWordListAgent mAutoCompleteWordListAgent;
+    private final Handler mainUiHandler;
+    private final Handler handler;
+    private final AutoCompleteWordListAgent autoCompleteWordListAgent;
 
     public AutoCompleteAgentManager(Activity activity, Handler mainUiHandler) {
         HandlerThread thread = new HandlerThread("org.mozilla.search.autocomplete.SuggestionAgent");
         // TODO: Where to kill this thread?
         thread.start();
         Log.i("AUTOCOMPLETE", "Starting thread");
-        mMainUiHandler = mainUiHandler;
-        mHandler = new SuggestionMessageHandler(thread.getLooper());
-        mAutoCompleteWordListAgent = new AutoCompleteWordListAgent(activity);
+        this.mainUiHandler = mainUiHandler;
+        handler = new SuggestionMessageHandler(thread.getLooper());
+        autoCompleteWordListAgent = new AutoCompleteWordListAgent(activity);
     }
 
     /**
@@ -42,11 +42,11 @@ class AutoCompleteAgentManager {
     public void search(String queryString) {
 
         // TODO check if there's a pending search.. not sure how to handle that.
-        mHandler.sendMessage(mHandler.obtainMessage(0, queryString));
+        handler.sendMessage(handler.obtainMessage(0, queryString));
     }
 
     /**
-     * This background thread runs the queries; the results get sent back through mMainUiHandler
+     * This background thread runs the queries; the results get sent back through mainUiHandler
      * <p/>
      * TODO: Refactor this wordlist search and add other search providers (eg: Yahoo)
      */
@@ -62,7 +62,7 @@ class AutoCompleteAgentManager {
             if (null == msg.obj)
                 return;
 
-            Cursor cursor = mAutoCompleteWordListAgent.getWordMatches(((String) msg.obj).toLowerCase()
+            Cursor cursor = autoCompleteWordListAgent.getWordMatches(((String) msg.obj).toLowerCase()
             );
             ArrayList<AutoCompleteModel> res = new ArrayList<AutoCompleteModel>();
 
@@ -75,7 +75,7 @@ class AutoCompleteAgentManager {
             }
 
 
-            mMainUiHandler.sendMessage(Message.obtain(mMainUiHandler, 0, res));
+            mainUiHandler.sendMessage(Message.obtain(mainUiHandler, 0, res));
         }
 
     }

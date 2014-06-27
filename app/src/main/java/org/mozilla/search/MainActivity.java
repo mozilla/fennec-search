@@ -26,7 +26,7 @@ import org.mozilla.search.stream.CardStreamFragment;
 public class MainActivity extends FragmentActivity implements AcceptsSearchQuery,
         FragmentManager.OnBackStackChangedListener {
 
-    private DetailActivity mDetailActivity;
+    private DetailActivity detailActivity;
 
     @Override
     protected void onCreate(Bundle stateBundle) {
@@ -63,14 +63,14 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
         super.onStart();
 
 
-        if (null == mDetailActivity) {
-            mDetailActivity = new DetailActivity();
+        if (null == detailActivity) {
+            detailActivity = new DetailActivity();
         }
 
         if (null == getSupportFragmentManager().findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT)) {
             FragmentTransaction txn = getSupportFragmentManager().beginTransaction();
-            txn.add(R.id.gecko_fragments, mDetailActivity, Constants.GECKO_VIEW_FRAGMENT);
-            txn.hide(mDetailActivity);
+            txn.add(R.id.gecko_fragments, detailActivity, Constants.GECKO_VIEW_FRAGMENT);
+            txn.hide(detailActivity);
 
             txn.commit();
         }

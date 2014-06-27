@@ -14,14 +14,14 @@ import android.widget.ArrayAdapter;
  */
 class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteModel> {
 
-    private final AcceptsJumpTaps mAcceptsJumpTaps;
+    private final AcceptsJumpTaps acceptsJumpTaps;
 
-    public <T extends Context & AcceptsJumpTaps> AutoCompleteAdapter(Context context,
-                                                                     AcceptsJumpTaps acceptsJumpTaps) {
+    public AutoCompleteAdapter(Context context,
+                               AcceptsJumpTaps acceptsJumpTaps) {
         // Uses '0' for the template id since we are overriding getView
         // and supplying our own view.
         super(context, 0);
-        mAcceptsJumpTaps = acceptsJumpTaps;
+        this.acceptsJumpTaps = acceptsJumpTaps;
     }
 
     @Override
@@ -34,7 +34,7 @@ class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteModel> {
             view = (AutoCompleteRowView) convertView;
         }
 
-        view.setOnJumpListener(mAcceptsJumpTaps);
+        view.setOnJumpListener(acceptsJumpTaps);
 
 
         AutoCompleteModel model = getItem(position);

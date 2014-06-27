@@ -19,7 +19,7 @@ import org.mozilla.search.R;
  */
 public class CardStreamFragment extends ListFragment {
 
-    private ArrayAdapter<PreloadAgent.TmpItem> mAdapter;
+    private ArrayAdapter<PreloadAgent.TmpItem> adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,8 +40,8 @@ public class CardStreamFragment extends ListFragment {
         View headerView = getLayoutInflater(savedInstanceState).inflate(R.layout.search_stream_header,
                 getListView(), false);
         getListView().addHeaderView(headerView, null, false);
-        if (null == mAdapter) {
-            mAdapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(),
+        if (null == adapter) {
+            adapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(),
                     R.layout.search_card, R.id.card_title, PreloadAgent.ITEMS) {
                 /**
                  * Return false here disables the ListView from highlighting the click events
@@ -54,7 +54,7 @@ public class CardStreamFragment extends ListFragment {
             };
         }
 
-        setListAdapter(mAdapter);
+        setListAdapter(adapter);
     }
 
 

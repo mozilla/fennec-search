@@ -20,8 +20,8 @@ import org.mozilla.search.R;
  */
 class AutoCompleteRowView extends LinearLayout {
 
-    private TextView mTextView;
-    private AcceptsJumpTaps mOnJumpListener;
+    private TextView textView;
+    private AcceptsJumpTaps onJumpListener;
 
     public AutoCompleteRowView(Context context) {
         super(context);
@@ -36,26 +36,26 @@ class AutoCompleteRowView extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.search_auto_complete_row, this, true);
 
-        mTextView = (TextView) findViewById(R.id.auto_complete_row_text);
+        textView = (TextView) findViewById(R.id.auto_complete_row_text);
 
         findViewById(R.id.auto_complete_row_jump_button).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null == mOnJumpListener) {
+                if (null == onJumpListener) {
                     Log.e("SuggestionRow.onJump", "jump listener is null");
                     return;
                 }
 
-                mOnJumpListener.onJumpTap(mTextView.getText().toString());
+                onJumpListener.onJumpTap(textView.getText().toString());
             }
         });
     }
 
     public void setMainText(String s) {
-        mTextView.setText(s);
+        textView.setText(s);
     }
 
     public void setOnJumpListener(AcceptsJumpTaps onJumpListener) {
-        mOnJumpListener = onJumpListener;
+        this.onJumpListener = onJumpListener;
     }
 }

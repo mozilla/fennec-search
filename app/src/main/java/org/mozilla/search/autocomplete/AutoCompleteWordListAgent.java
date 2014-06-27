@@ -34,13 +34,13 @@ class AutoCompleteWordListAgent {
     private static final String FTS_VIRTUAL_TABLE = "FTS";
     private static final int DATABASE_VERSION = 1;
 
-    private final DatabaseOpenHelper mDatabaseOpenHelper;
+    private final DatabaseOpenHelper databaseOpenHelper;
 
     public AutoCompleteWordListAgent(Activity activity) {
-        mDatabaseOpenHelper = new DatabaseOpenHelper(activity);
+        databaseOpenHelper = new DatabaseOpenHelper(activity);
         // DB helper uses lazy initialization, so this forces the db helper to start indexing the
         // wordlist
-        mDatabaseOpenHelper.getReadableDatabase();
+        databaseOpenHelper.getReadableDatabase();
     }
 
     public Cursor getWordMatches(String query) {
@@ -53,7 +53,7 @@ class AutoCompleteWordListAgent {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(FTS_VIRTUAL_TABLE);
 
-        Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
+        Cursor cursor = builder.query(databaseOpenHelper.getReadableDatabase(),
                 null, selection, selectionArgs, null, null, null, Constants.AUTOCOMPLETE_ROW_LIMIT);
 
         if (cursor == null) {
@@ -67,22 +67,22 @@ class AutoCompleteWordListAgent {
 
     private static class DatabaseOpenHelper extends SQLiteOpenHelper {
 
-        private final Activity mActivity;
+        private final Activity activity;
 
-        private SQLiteDatabase mDatabase;
+        private SQLiteDatabase database;
 
         private static final String FTS_TABLE_CREATE =
                 "CREATE VIRTUAL TABLE " + FTS_VIRTUAL_TABLE + " USING fts3 (" + COL_WORD + ")";
 
         DatabaseOpenHelper(Activity activity) {
             super(activity, DATABASE_NAME, null, DATABASE_VERSION);
-            mActivity = activity;
+            this.activity = activity;
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            mDatabase = db;
-            mDatabase.execSQL(FTS_TABLE_CREATE);
+            database = db;
+            database.execSQL(FTS_TABLE_CREATE);
 
             loadDictionary();
         }
@@ -92,22 +92,22 @@ class AutoCompleteWordListAgent {
                 public void run() {
                     try {
 
-                        mActivity.runOnUiThread(new Runnable() {
+                        activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(mActivity, "Starting post-install indexing",
+                                Toast.makeText(activity, "Starting post-install indexing",
                                         Toast.LENGTH_SHORT).show();
-                                Toast.makeText(mActivity, "Don't worry; Mark & Ian we'll figure out a way around " +
+                                Toast.makeText(activity, "Don't worry; Mark & Ian we'll figure out a way around " +
                                                 "this :)",
                                         Toast.LENGTH_SHORT
                                 ).show();
                             }
                         });
                         loadWords();
-                        mActivity.runOnUiThread(new Runnable() {
+                        activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(mActivity, "All done!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(activity, "All done!", Toast.LENGTH_SHORT).show();
                             }
                         });
                     } catch (IOException e) {
@@ -118,14 +118,14 @@ class AutoCompleteWordListAgent {
         }
 
         private void loadWords() throws IOException {
-            final Resources resources = mActivity.getResources();
+            final Resources resources = activity.getResources();
             InputStream inputStream = resources.openRawResource(R.raw.en_us);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
 
             String sql = "INSERT INTO " + FTS_VIRTUAL_TABLE + " VALUES (?);";
-            SQLiteStatement statement = mDatabase.compileStatement(sql);
-            mDatabase.beginTransaction();
+            SQLiteStatement statement = database.compileStatement(sql);
+            database.beginTransaction();
 
             try {
                 String line;
@@ -135,8 +135,8 @@ class AutoCompleteWordListAgent {
                     statement.execute();
                 }
             } finally {
-                mDatabase.setTransactionSuccessful();
-                mDatabase.endTransaction();
+                database.setTransactionSuccessful();
+                database.endTransaction();
             }
         }
 

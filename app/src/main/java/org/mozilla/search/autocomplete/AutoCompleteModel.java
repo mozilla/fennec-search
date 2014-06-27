@@ -14,18 +14,18 @@ class AutoCompleteModel {
     // The text that should immediately jump out to the user;
     // for example, the name of a restaurant or the title
     // of a website.
-    private final String mMainText;
+    private final String mainText;
 
     public AutoCompleteModel(String mainText) {
-        mMainText = mainText;
+        this.mainText = mainText;
     }
 
     public String getMainText() {
-        return mMainText;
+        return mainText;
     }
 
     public String toString() {
-        return mMainText;
+        return mainText;
     }
 
 }

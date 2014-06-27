@@ -21,7 +21,7 @@ import org.mozilla.gecko.PrefsHelper;
 public class DetailActivity extends Fragment {
 
     private static final String LOGTAG = "DetailActivity";
-    private GeckoView mGeckoView;
+    private GeckoView geckoView;
 
 
     @Override
@@ -29,19 +29,19 @@ public class DetailActivity extends Fragment {
         View mainView = inflater.inflate(R.layout.search_activity_detail, container, false);
 
 
-        mGeckoView = (GeckoView) mainView.findViewById(R.id.gecko_view);
+        geckoView = (GeckoView) mainView.findViewById(R.id.gecko_view);
 
-        mGeckoView.setChromeDelegate(new MyGeckoViewChrome());
-        mGeckoView.setContentDelegate(new SearchGeckoView());
+        geckoView.setChromeDelegate(new MyGeckoViewChrome());
+        geckoView.setContentDelegate(new SearchGeckoView());
 
         PrefsHelper.setPref("privacy.clearOnShutdown.cache", true);
         PrefsHelper.setPref("privacy.clearOnShutdown.cookies", true);
 
 
-        if (null == mGeckoView.getCurrentBrowser()) {
+        if (null == geckoView.getCurrentBrowser()) {
             // This pageload allows Fennec to be loaded in a background fragment.
             // Without supplying a URL, it doesn't look like Fennec will get loaded?
-            mGeckoView.addBrowser("https://search.yahoo.com/search?p=firefox%20android");
+            geckoView.addBrowser("https://search.yahoo.com/search?p=firefox%20android");
 
         }
 
@@ -50,10 +50,10 @@ public class DetailActivity extends Fragment {
 
 
     public void setUrl(String url) {
-        if (null == mGeckoView.getCurrentBrowser()) {
-            mGeckoView.addBrowser(url);
+        if (null == geckoView.getCurrentBrowser()) {
+            geckoView.addBrowser(url);
         } else {
-            mGeckoView.getCurrentBrowser().loadUrl(url);
+            geckoView.getCurrentBrowser().loadUrl(url);
         }
     }
 
