@@ -36,14 +36,14 @@ import org.mozilla.search.R;
 public class AutoCompleteFragment extends Fragment implements AdapterView.OnItemClickListener,
         TextView.OnEditorActionListener, AcceptsJumpTaps {
 
-    private View mMainView;
-    private FrameLayout mBackdropFrame;
-    private EditText mSearchBar;
-    private ListView mSuggestionDropdown;
-    private InputMethodManager mInputMethodManager;
-    private AutoCompleteAdapter mAutoCompleteAdapter;
-    private AutoCompleteAgentManager mAutoCompleteAgentManager;
-    private State mState;
+    private View mainView;
+    private FrameLayout backdropFrame;
+    private EditText searchBar;
+    private ListView suggestionDropdown;
+    private InputMethodManager inputMethodManager;
+    private AutoCompleteAdapter autoCompleteAdapter;
+    private AutoCompleteAgentManager autoCompleteAgentManager;
+    private State state;
 
     private enum State {
         WAITING,  // The user is doing something else in the app.
@@ -56,19 +56,19 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
 
 
-        mMainView = inflater.inflate(R.layout.search_auto_complete, container, false);
-        mBackdropFrame = (FrameLayout) mMainView.findViewById(R.id.auto_complete_backdrop);
-        mSearchBar = (EditText) mMainView.findViewById(R.id.auto_complete_search_bar);
-        mSuggestionDropdown = (ListView) mMainView.findViewById(R.id.auto_complete_dropdown);
+        mainView = inflater.inflate(R.layout.search_auto_complete, container, false);
+        backdropFrame = (FrameLayout) mainView.findViewById(R.id.auto_complete_backdrop);
+        searchBar = (EditText) mainView.findViewById(R.id.auto_complete_search_bar);
+        suggestionDropdown = (ListView) mainView.findViewById(R.id.auto_complete_dropdown);
 
-        mInputMethodManager = (InputMethodManager) getActivity().getSystemService(
-                Context.INPUT_METHOD_SERVICE);
+        inputMethodManager =
+                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // Attach a listener for the "search" key on the keyboard.
-        mSearchBar.addTextChangedListener(new TextWatcher() {
+        searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -81,32 +81,34 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
             @Override
             public void afterTextChanged(Editable s) {
-                mAutoCompleteAgentManager.search(s.toString());
+                autoCompleteAgentManager.search(s.toString());
             }
         });
-        mSearchBar.setOnEditorActionListener(this);
-        mSearchBar.setOnClickListener(new View.OnClickListener() {
+        searchBar.setOnEditorActionListener(this);
+        searchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.hasFocus())
+                if (v.hasFocus()) {
                     return;
+                }
                 transitionToRunning();
             }
         });
 
-        mBackdropFrame.setOnClickListener(new BackdropClickListener());
+        backdropFrame.setOnClickListener(new BackdropClickListener());
 
-        mAutoCompleteAdapter = new AutoCompleteAdapter(getActivity(), this);
+        autoCompleteAdapter = new AutoCompleteAdapter(getActivity(), this);
 
         // Disable notifying on change. We're going to be changing the entire dataset, so
         // we don't want multiple re-draws.
-        mAutoCompleteAdapter.setNotifyOnChange(false);
+        autoCompleteAdapter.setNotifyOnChange(false);
 
-        mSuggestionDropdown.setAdapter(mAutoCompleteAdapter);
+        suggestionDropdown.setAdapter(autoCompleteAdapter);
 
         initRows();
 
-        mAutoCompleteAgentManager = new AutoCompleteAgentManager(getActivity(), new MainUiHandler(mAutoCompleteAdapter));
+        autoCompleteAgentManager =
+                new AutoCompleteAgentManager(getActivity(), new MainUiHandler(autoCompleteAdapter));
 
         // This will hide the autocomplete box and background frame.
         // Is there a case where we *shouldn't* hide this upfront?
@@ -116,33 +118,30 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         transitionToRunning();
 
         // Attach listener for tapping on a suggestion.
-        mSuggestionDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        suggestionDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String query = ((AutoCompleteModel) mSuggestionDropdown.getItemAtPosition(position)).getMainText();
+                String query = ((AutoCompleteModel) suggestionDropdown.getItemAtPosition(position))
+                        .getMainText();
                 startSearch(query);
             }
         });
 
-        return mMainView;
+        return mainView;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (null != mInputMethodManager)
-            mInputMethodManager = null;
-        if (null != mMainView)
-            mMainView = null;
-        if (null != mSearchBar)
-            mSearchBar = null;
-        if (null != mSuggestionDropdown) {
-            mSuggestionDropdown.setOnItemClickListener(null);
-            mSuggestionDropdown.setAdapter(null);
-            mSuggestionDropdown = null;
+        inputMethodManager = null;
+        mainView = null;
+        searchBar = null;
+        if (null != suggestionDropdown) {
+            suggestionDropdown.setOnItemClickListener(null);
+            suggestionDropdown.setAdapter(null);
+            suggestionDropdown = null;
         }
-        if (null != mAutoCompleteAdapter)
-            mAutoCompleteAdapter = null;
+        autoCompleteAdapter = null;
     }
 
     /**
@@ -169,12 +168,12 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
     private void initRows() {
         // TODO: Query history for these items.
-        mAutoCompleteAdapter.add(new AutoCompleteModel("banana"));
-        mAutoCompleteAdapter.add(new AutoCompleteModel("cat pics"));
-        mAutoCompleteAdapter.add(new AutoCompleteModel("mexican food"));
-        mAutoCompleteAdapter.add(new AutoCompleteModel("cuba libre"));
+        autoCompleteAdapter.add(new AutoCompleteModel("banana"));
+        autoCompleteAdapter.add(new AutoCompleteModel("cat pics"));
+        autoCompleteAdapter.add(new AutoCompleteModel("mexican food"));
+        autoCompleteAdapter.add(new AutoCompleteModel("cuba libre"));
 
-        mAutoCompleteAdapter.notifyDataSetChanged();
+        autoCompleteAdapter.notifyDataSetChanged();
     }
 
 
@@ -183,8 +182,8 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
      */
     private void startSearch(String queryString) {
         if (getActivity() instanceof AcceptsSearchQuery) {
-            mSearchBar.setText(queryString);
-            mSearchBar.setSelection(queryString.length());
+            searchBar.setText(queryString);
+            searchBar.setSelection(queryString.length());
             transitionToWaiting();
             ((AcceptsSearchQuery) getActivity()).onSearch(queryString);
         } else {
@@ -193,35 +192,37 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void transitionToWaiting() {
-        if (mState == State.WAITING)
+        if (state == State.WAITING) {
             return;
-        mSearchBar.setFocusable(false);
-        mSearchBar.setFocusableInTouchMode(false);
-        mSearchBar.clearFocus();
-        mInputMethodManager.hideSoftInputFromWindow(mSearchBar.getWindowToken(), 0);
-        mSuggestionDropdown.setVisibility(View.GONE);
-        mBackdropFrame.setVisibility(View.GONE);
-        mState = State.WAITING;
+        }
+        searchBar.setFocusable(false);
+        searchBar.setFocusableInTouchMode(false);
+        searchBar.clearFocus();
+        inputMethodManager.hideSoftInputFromWindow(searchBar.getWindowToken(), 0);
+        suggestionDropdown.setVisibility(View.GONE);
+        backdropFrame.setVisibility(View.GONE);
+        state = State.WAITING;
     }
 
     private void transitionToRunning() {
-        if (mState == State.RUNNING)
+        if (state == State.RUNNING) {
             return;
-        mSearchBar.setFocusable(true);
-        mSearchBar.setFocusableInTouchMode(true);
-        mSearchBar.requestFocus();
-        mInputMethodManager.showSoftInput(mSearchBar, InputMethodManager.SHOW_IMPLICIT);
-        mSuggestionDropdown.setVisibility(View.VISIBLE);
-        mBackdropFrame.setVisibility(View.VISIBLE);
-        mState = State.RUNNING;
+        }
+        searchBar.setFocusable(true);
+        searchBar.setFocusableInTouchMode(true);
+        searchBar.requestFocus();
+        inputMethodManager.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT);
+        suggestionDropdown.setVisibility(View.VISIBLE);
+        backdropFrame.setVisibility(View.VISIBLE);
+        state = State.RUNNING;
     }
 
     @Override
     public void onJumpTap(String suggestion) {
-        mSearchBar.setText(suggestion);
+        searchBar.setText(suggestion);
         // Move cursor to end of search input.
-        mSearchBar.setSelection(suggestion.length());
-        mAutoCompleteAgentManager.search(suggestion);
+        searchBar.setSelection(suggestion.length());
+        autoCompleteAgentManager.search(suggestion);
     }
 
 
@@ -230,28 +231,31 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
      */
     private static class MainUiHandler extends Handler {
 
-        final AutoCompleteAdapter mAutoCompleteAdapter;
+        final AutoCompleteAdapter autoCompleteAdapter1;
 
         public MainUiHandler(AutoCompleteAdapter autoCompleteAdapter) {
-            mAutoCompleteAdapter = autoCompleteAdapter;
+            autoCompleteAdapter1 = autoCompleteAdapter;
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (null == msg.obj)
+            if (null == msg.obj) {
                 return;
+            }
 
-            if (!(msg.obj instanceof Iterable))
+            if (!(msg.obj instanceof Iterable)) {
                 return;
+            }
 
-            mAutoCompleteAdapter.clear();
+            autoCompleteAdapter1.clear();
 
             for (Object obj : (Iterable) msg.obj) {
-                if (obj instanceof AutoCompleteModel)
-                    mAutoCompleteAdapter.add((AutoCompleteModel) obj);
+                if (obj instanceof AutoCompleteModel) {
+                    autoCompleteAdapter1.add((AutoCompleteModel) obj);
+                }
             }
-            mAutoCompleteAdapter.notifyDataSetChanged();
+            autoCompleteAdapter1.notifyDataSetChanged();
 
         }
     }

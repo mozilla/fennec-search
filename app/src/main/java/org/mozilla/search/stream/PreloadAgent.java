@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * A temporary agent for loading cards into the pre-load card stream.
- *
+ * <p/>
  * When we have more agents, we'll want to put an agent manager between the CardStreamFragment
  * and the set of all agents. See autocomplete.AutoCompleteFragmentManager.
  */

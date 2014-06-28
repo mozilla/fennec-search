@@ -26,7 +26,7 @@ import org.mozilla.search.stream.CardStreamFragment;
 public class MainActivity extends FragmentActivity implements AcceptsSearchQuery,
         FragmentManager.OnBackStackChangedListener {
 
-    private DetailActivity mDetailActivity;
+    private DetailActivity detailActivity;
 
     @Override
     protected void onCreate(Bundle stateBundle) {
@@ -42,14 +42,13 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
         if (null == stateBundle) {
 
             // Starts a Fragment transaction to track the stack
-            FragmentTransaction localFragmentTransaction = localFragmentManager
-                    .beginTransaction();
+            FragmentTransaction localFragmentTransaction = localFragmentManager.beginTransaction();
 
-            localFragmentTransaction.add(R.id.header_fragments,
-                    new AutoCompleteFragment(), Constants.AUTO_COMPLETE_FRAGMENT);
+            localFragmentTransaction.add(R.id.header_fragments, new AutoCompleteFragment(),
+                    Constants.AUTO_COMPLETE_FRAGMENT);
 
-            localFragmentTransaction.add(R.id.presearch_fragments,
-                    new CardStreamFragment(), Constants.CARD_STREAM_FRAGMENT);
+            localFragmentTransaction.add(R.id.presearch_fragments, new CardStreamFragment(),
+                    Constants.CARD_STREAM_FRAGMENT);
 
             // Commits this transaction to display the Fragment
             localFragmentTransaction.commit();
@@ -63,14 +62,14 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
         super.onStart();
 
 
-        if (null == mDetailActivity) {
-            mDetailActivity = new DetailActivity();
+        if (null == detailActivity) {
+            detailActivity = new DetailActivity();
         }
 
         if (null == getSupportFragmentManager().findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT)) {
             FragmentTransaction txn = getSupportFragmentManager().beginTransaction();
-            txn.add(R.id.gecko_fragments, mDetailActivity, Constants.GECKO_VIEW_FRAGMENT);
-            txn.hide(mDetailActivity);
+            txn.add(R.id.gecko_fragments, detailActivity, Constants.GECKO_VIEW_FRAGMENT);
+            txn.hide(detailActivity);
 
             txn.commit();
         }
@@ -79,18 +78,22 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
     @Override
     public void onSearch(String s) {
         FragmentManager localFragmentManager = getSupportFragmentManager();
-        FragmentTransaction localFragmentTransaction = localFragmentManager
-                .beginTransaction();
+        FragmentTransaction localFragmentTransaction = localFragmentManager.beginTransaction();
 
-        localFragmentTransaction.hide(localFragmentManager.findFragmentByTag(Constants.CARD_STREAM_FRAGMENT)).addToBackStack(null);
+        localFragmentTransaction
+                .hide(localFragmentManager.findFragmentByTag(Constants.CARD_STREAM_FRAGMENT))
+                .addToBackStack(null);
 
-        localFragmentTransaction.show(localFragmentManager.findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT)).addToBackStack(null);
+        localFragmentTransaction
+                .show(localFragmentManager.findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT))
+                .addToBackStack(null);
 
         localFragmentTransaction.commit();
 
 
-        ((DetailActivity) getSupportFragmentManager().findFragmentByTag(Constants
-                .GECKO_VIEW_FRAGMENT)).setUrl("https://search.yahoo.com/search?p=" + Uri.encode(s));
+        ((DetailActivity) getSupportFragmentManager()
+                .findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT))
+                .setUrl("https://search.yahoo.com/search?p=" + Uri.encode(s));
     }
 
     @Override
