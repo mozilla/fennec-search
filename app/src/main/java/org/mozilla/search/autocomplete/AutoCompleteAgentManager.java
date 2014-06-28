@@ -16,14 +16,14 @@ import java.util.ArrayList;
 
 /**
  * A single entry point for querying all agents.
- *
+ * <p/>
  * An agent is responsible for querying some underlying data source. It could be a
  * flat file, or a REST endpoint, or a content provider.
  */
 class AutoCompleteAgentManager {
 
     private final Handler mainUiHandler;
-    private final Handler handler;
+    private final Handler localHandler;
     private final AutoCompleteWordListAgent autoCompleteWordListAgent;
 
     public AutoCompleteAgentManager(Activity activity, Handler mainUiHandler) {
@@ -32,7 +32,7 @@ class AutoCompleteAgentManager {
         thread.start();
         Log.i("AUTOCOMPLETE", "Starting thread");
         this.mainUiHandler = mainUiHandler;
-        handler = new SuggestionMessageHandler(thread.getLooper());
+        localHandler = new SuggestionMessageHandler(thread.getLooper());
         autoCompleteWordListAgent = new AutoCompleteWordListAgent(activity);
     }
 
@@ -40,9 +40,8 @@ class AutoCompleteAgentManager {
      * Process the next incoming query.
      */
     public void search(String queryString) {
-
         // TODO check if there's a pending search.. not sure how to handle that.
-        handler.sendMessage(handler.obtainMessage(0, queryString));
+        localHandler.sendMessage(localHandler.obtainMessage(0, queryString));
     }
 
     /**
@@ -59,19 +58,21 @@ class AutoCompleteAgentManager {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (null == msg.obj)
+            if (null == msg.obj) {
                 return;
+            }
 
-            Cursor cursor = autoCompleteWordListAgent.getWordMatches(((String) msg.obj).toLowerCase()
-            );
+            Cursor cursor =
+                    autoCompleteWordListAgent.getWordMatches(((String) msg.obj).toLowerCase());
             ArrayList<AutoCompleteModel> res = new ArrayList<AutoCompleteModel>();
 
-            if (null == cursor)
+            if (null == cursor) {
                 return;
+            }
 
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                res.add(new AutoCompleteModel(
-                        cursor.getString(cursor.getColumnIndex(AutoCompleteWordListAgent.COL_WORD))));
+                res.add(new AutoCompleteModel(cursor.getString(
+                        cursor.getColumnIndex(AutoCompleteWordListAgent.COL_WORD))));
             }
 
 

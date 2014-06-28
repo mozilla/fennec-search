@@ -53,8 +53,8 @@ class AutoCompleteWordListAgent {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(FTS_VIRTUAL_TABLE);
 
-        Cursor cursor = builder.query(databaseOpenHelper.getReadableDatabase(),
-                null, selection, selectionArgs, null, null, null, Constants.AUTOCOMPLETE_ROW_LIMIT);
+        Cursor cursor = builder.query(databaseOpenHelper.getReadableDatabase(), null, selection,
+                selectionArgs, null, null, null, Constants.AUTOCOMPLETE_ROW_LIMIT);
 
         if (cursor == null) {
             return null;
@@ -97,9 +97,9 @@ class AutoCompleteWordListAgent {
                             public void run() {
                                 Toast.makeText(activity, "Starting post-install indexing",
                                         Toast.LENGTH_SHORT).show();
-                                Toast.makeText(activity, "Don't worry; Mark & Ian we'll figure out a way around " +
-                                                "this :)",
-                                        Toast.LENGTH_SHORT
+                                Toast.makeText(activity,
+                                        "Don't worry; Mark & Ian we'll figure out a way around " +
+                                                "this :)", Toast.LENGTH_SHORT
                                 ).show();
                             }
                         });
@@ -142,13 +142,11 @@ class AutoCompleteWordListAgent {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
+            Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion +
+                    ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + FTS_VIRTUAL_TABLE);
             onCreate(db);
         }
-
-
 
 
     }

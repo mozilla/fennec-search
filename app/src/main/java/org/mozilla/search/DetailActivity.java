@@ -25,7 +25,8 @@ public class DetailActivity extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
         View mainView = inflater.inflate(R.layout.search_activity_detail, container, false);
 
 

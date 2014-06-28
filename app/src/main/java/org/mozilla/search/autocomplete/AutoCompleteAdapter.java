@@ -16,8 +16,7 @@ class AutoCompleteAdapter extends ArrayAdapter<AutoCompleteModel> {
 
     private final AcceptsJumpTaps acceptsJumpTaps;
 
-    public AutoCompleteAdapter(Context context,
-                               AcceptsJumpTaps acceptsJumpTaps) {
+    public AutoCompleteAdapter(Context context, AcceptsJumpTaps acceptsJumpTaps) {
         // Uses '0' for the template id since we are overriding getView
         // and supplying our own view.
         super(context, 0);

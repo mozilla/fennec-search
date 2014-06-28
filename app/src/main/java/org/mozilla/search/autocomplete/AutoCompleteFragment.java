@@ -56,7 +56,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
 
 
         mainView = inflater.inflate(R.layout.search_auto_complete, container, false);
@@ -64,8 +64,8 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         searchBar = (EditText) mainView.findViewById(R.id.auto_complete_search_bar);
         suggestionDropdown = (ListView) mainView.findViewById(R.id.auto_complete_dropdown);
 
-        inputMethodManager = (InputMethodManager) getActivity().getSystemService(
-                Context.INPUT_METHOD_SERVICE);
+        inputMethodManager =
+                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // Attach a listener for the "search" key on the keyboard.
         searchBar.addTextChangedListener(new TextWatcher() {
@@ -88,8 +88,9 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         searchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.hasFocus())
+                if (v.hasFocus()) {
                     return;
+                }
                 transitionToRunning();
             }
         });
@@ -106,7 +107,8 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
 
         initRows();
 
-        autoCompleteAgentManager = new AutoCompleteAgentManager(getActivity(), new MainUiHandler(autoCompleteAdapter));
+        autoCompleteAgentManager =
+                new AutoCompleteAgentManager(getActivity(), new MainUiHandler(autoCompleteAdapter));
 
         // This will hide the autocomplete box and background frame.
         // Is there a case where we *shouldn't* hide this upfront?
@@ -119,7 +121,8 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         suggestionDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String query = ((AutoCompleteModel) suggestionDropdown.getItemAtPosition(position)).getMainText();
+                String query = ((AutoCompleteModel) suggestionDropdown.getItemAtPosition(position))
+                        .getMainText();
                 startSearch(query);
             }
         });
@@ -130,19 +133,15 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (null != inputMethodManager)
-            inputMethodManager = null;
-        if (null != mainView)
-            mainView = null;
-        if (null != searchBar)
-            searchBar = null;
+        inputMethodManager = null;
+        mainView = null;
+        searchBar = null;
         if (null != suggestionDropdown) {
             suggestionDropdown.setOnItemClickListener(null);
             suggestionDropdown.setAdapter(null);
             suggestionDropdown = null;
         }
-        if (null != autoCompleteAdapter)
-            autoCompleteAdapter = null;
+        autoCompleteAdapter = null;
     }
 
     /**
@@ -193,8 +192,9 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void transitionToWaiting() {
-        if (state == State.WAITING)
+        if (state == State.WAITING) {
             return;
+        }
         searchBar.setFocusable(false);
         searchBar.setFocusableInTouchMode(false);
         searchBar.clearFocus();
@@ -205,8 +205,9 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void transitionToRunning() {
-        if (state == State.RUNNING)
+        if (state == State.RUNNING) {
             return;
+        }
         searchBar.setFocusable(true);
         searchBar.setFocusableInTouchMode(true);
         searchBar.requestFocus();
@@ -239,17 +240,20 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (null == msg.obj)
+            if (null == msg.obj) {
                 return;
+            }
 
-            if (!(msg.obj instanceof Iterable))
+            if (!(msg.obj instanceof Iterable)) {
                 return;
+            }
 
             autoCompleteAdapter1.clear();
 
             for (Object obj : (Iterable) msg.obj) {
-                if (obj instanceof AutoCompleteModel)
+                if (obj instanceof AutoCompleteModel) {
                     autoCompleteAdapter1.add((AutoCompleteModel) obj);
+                }
             }
             autoCompleteAdapter1.notifyDataSetChanged();
 
