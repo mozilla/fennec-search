@@ -12,7 +12,8 @@ import android.support.v4.app.FragmentTransaction;
 
 import org.mozilla.search.autocomplete.AcceptsSearchQuery;
 import org.mozilla.search.autocomplete.AutoCompleteFragment;
-import org.mozilla.search.stream.CardStreamFragment;
+import org.mozilla.search.presearch.CardStreamFragment;
+import org.mozilla.search.results.WebViewFragment;
 
 
 /**
@@ -26,7 +27,7 @@ import org.mozilla.search.stream.CardStreamFragment;
 public class MainActivity extends FragmentActivity implements AcceptsSearchQuery,
         FragmentManager.OnBackStackChangedListener {
 
-    private DetailActivity detailActivity;
+    private WebViewFragment webViewFragment;
 
     @Override
     protected void onCreate(Bundle stateBundle) {
@@ -62,14 +63,14 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
         super.onStart();
 
 
-        if (null == detailActivity) {
-            detailActivity = new DetailActivity();
+        if (null == webViewFragment) {
+            webViewFragment = new WebViewFragment();
         }
 
         if (null == getSupportFragmentManager().findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT)) {
             FragmentTransaction txn = getSupportFragmentManager().beginTransaction();
-            txn.add(R.id.gecko_fragments, detailActivity, Constants.GECKO_VIEW_FRAGMENT);
-            txn.hide(detailActivity);
+            txn.add(R.id.gecko_fragments, webViewFragment, Constants.GECKO_VIEW_FRAGMENT);
+            txn.hide(webViewFragment);
 
             txn.commit();
         }
@@ -91,7 +92,7 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
         localFragmentTransaction.commit();
 
 
-        ((DetailActivity) getSupportFragmentManager()
+        ((WebViewFragment) getSupportFragmentManager()
                 .findFragmentByTag(Constants.GECKO_VIEW_FRAGMENT))
                 .setUrl("https://search.yahoo.com/search?p=" + Uri.encode(s));
     }
