@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.search.stream;
+package org.mozilla.search.presearch;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -19,7 +19,7 @@ import org.mozilla.search.R;
  */
 public class CardStreamFragment extends ListFragment {
 
-    private ArrayAdapter<PreloadAgent.TmpItem> adapter;
+    private ArrayAdapter<PresearchAgent.TmpItem> adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,8 +41,8 @@ public class CardStreamFragment extends ListFragment {
                 .inflate(R.layout.search_stream_header, getListView(), false);
         getListView().addHeaderView(headerView, null, false);
         if (null == adapter) {
-            adapter = new ArrayAdapter<PreloadAgent.TmpItem>(getActivity(), R.layout.search_card,
-                    R.id.card_title, PreloadAgent.ITEMS) {
+            adapter = new ArrayAdapter<PresearchAgent.TmpItem>(getActivity(), R.layout.search_card,
+                    R.id.card_title, PresearchAgent.ITEMS) {
                 /**
                  * Return false here disables the ListView from highlighting the click events
                  * for each of the items. Each card should handle its own click events.
