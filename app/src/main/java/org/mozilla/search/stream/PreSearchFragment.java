@@ -17,7 +17,7 @@ import org.mozilla.search.R;
  * we only use this during pre-search, but we could also use it
  * during post-search at some point.
  */
-public class CardStreamFragment extends ListFragment {
+public class PreSearchFragment extends ListFragment {
 
     private ArrayAdapter<PreloadAgent.TmpItem> adapter;
 
@@ -25,7 +25,7 @@ public class CardStreamFragment extends ListFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public CardStreamFragment() {
+    public PreSearchFragment() {
     }
 
     @Override
