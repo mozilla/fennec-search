@@ -23,81 +23,83 @@ import org.mozilla.search.stream.PreSearchFragment;
  * now, the only message passing occurs when a user wants to submit a search query. That
  * passes through the onSearch method here.
  */
-public class MainActivity extends FragmentActivity implements AcceptsSearchQuery,
-        FragmentManager.OnBackStackChangedListener {
+public class MainActivity extends FragmentActivity implements AcceptsSearchQuery {
 
-    private PostSearchFragment detailActivity;
+    private PreSearchFragment preSearchFragment;
+    private PostSearchFragment postSearchFragment;
+    private SearchFragment searchFragment;
+    private FragmentManager fragmentManager;
 
+    /**
+     * Initialize all of the fragments, and add them to the fragment tree.
+     */
     @Override
     protected void onCreate(Bundle stateBundle) {
         super.onCreate(stateBundle);
-
-        // Sets the content view for the Activity
         setContentView(R.layout.search_activity_main);
 
-        // Gets an instance of the support library FragmentManager
-        FragmentManager localFragmentManager = getSupportFragmentManager();
+        boolean geckoNeedsToBeHidden = true;
 
-        // If the incoming state of the Activity is null, sets the initial view to be thumbnails
-        if (null == stateBundle) {
-
-            // Starts a Fragment transaction to track the stack
-            FragmentTransaction localFragmentTransaction = localFragmentManager.beginTransaction();
-
-            localFragmentTransaction.add(R.id.header_fragments, new SearchFragment(),
-                    Constants.SEARCH_FRAGMENT);
-
-            localFragmentTransaction.add(R.id.presearch_fragments, new PreSearchFragment(),
-                    Constants.PRESEARCH_FRAGMENT);
-
-            // Commits this transaction to display the Fragment
-            localFragmentTransaction.commit();
-
-            // The incoming state of the Activity isn't null.
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-        if (null == detailActivity) {
-            detailActivity = new PostSearchFragment();
+        if (fragmentManager == null) {
+            fragmentManager = getSupportFragmentManager();
         }
 
-        if (null == getSupportFragmentManager().findFragmentByTag(Constants.POSTSEARCH_FRAGMENT)) {
-            FragmentTransaction txn = getSupportFragmentManager().beginTransaction();
-            txn.add(R.id.gecko_fragments, detailActivity, Constants.POSTSEARCH_FRAGMENT);
-            txn.hide(detailActivity);
+        final FragmentTransaction txn = fragmentManager.beginTransaction();
 
+        preSearchFragment = (PreSearchFragment) fragmentManager.findFragmentByTag(Constants.PRESEARCH_FRAGMENT);
+        postSearchFragment = (PostSearchFragment) fragmentManager.findFragmentByTag(Constants.POSTSEARCH_FRAGMENT);
+        searchFragment = (SearchFragment) fragmentManager.findFragmentByTag(Constants.SEARCH_FRAGMENT);
+
+        if (preSearchFragment == null) {
+            preSearchFragment = new PreSearchFragment();
+            txn.add(R.id.presearch_fragments, preSearchFragment, Constants.PRESEARCH_FRAGMENT);
+        }
+
+        if (postSearchFragment == null) {
+            postSearchFragment = new PostSearchFragment();
+            txn.add(R.id.gecko_fragments, postSearchFragment, Constants.POSTSEARCH_FRAGMENT);
+            txn.hide(postSearchFragment);
+            geckoNeedsToBeHidden = false;
+        }
+
+        if (searchFragment == null) {
+            searchFragment = new SearchFragment();
+            txn.add(R.id.header_fragments, searchFragment, Constants.SEARCH_FRAGMENT);
+        }
+
+        // Only commit the transaction if there are pending operations.
+        if (!txn.isEmpty()) {
             txn.commit();
+            if (geckoNeedsToBeHidden) {
+                fragmentManager.executePendingTransactions();
+            }
+        }
+
+        if (geckoNeedsToBeHidden) {
+            showPreSearch();
         }
     }
 
     @Override
     public void onSearch(String s) {
-        FragmentManager localFragmentManager = getSupportFragmentManager();
-        FragmentTransaction localFragmentTransaction = localFragmentManager.beginTransaction();
+        if (postSearchFragment.isHidden()) {
+            showPostSearch();
+        }
+        postSearchFragment.setUrl("https://search.yahoo.com/search?p=" + Uri.encode(s));
+     }
 
-        localFragmentTransaction
-                .hide(localFragmentManager.findFragmentByTag(Constants.POSTSEARCH_FRAGMENT))
-                .addToBackStack(null);
-
-        localFragmentTransaction
-                .show(localFragmentManager.findFragmentByTag(Constants.POSTSEARCH_FRAGMENT))
-                .addToBackStack(null);
-
-        localFragmentTransaction.commit();
-
-
-        ((PostSearchFragment) getSupportFragmentManager()
-                .findFragmentByTag(Constants.POSTSEARCH_FRAGMENT))
-                .setUrl("https://search.yahoo.com/search?p=" + Uri.encode(s));
+    private void showPreSearch() {
+        final FragmentTransaction txn = fragmentManager.beginTransaction();
+        txn.show(preSearchFragment).addToBackStack(null);
+        txn.hide(postSearchFragment).addToBackStack(null);
+        txn.commit();
     }
 
-    @Override
-    public void onBackStackChanged() {
-
+    private void showPostSearch() {
+        final FragmentTransaction txn = fragmentManager.beginTransaction();
+        txn.show(postSearchFragment).addToBackStack(null);
+        txn.hide(preSearchFragment).addToBackStack(null);
+        txn.commit();
     }
+
 }
