@@ -33,7 +33,7 @@ import org.mozilla.search.R;
  * TODO: Add clear button to search input
  * TODO: Add more search providers (other than the dictionary)
  */
-public class AutoCompleteFragment extends Fragment implements AdapterView.OnItemClickListener,
+public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener,
         TextView.OnEditorActionListener, AcceptsJumpTaps {
 
     private View mainView;
@@ -50,7 +50,7 @@ public class AutoCompleteFragment extends Fragment implements AdapterView.OnItem
         RUNNING   // The user is in search mode.
     }
 
-    public AutoCompleteFragment() {
+    public SearchFragment() {
         // Required empty public constructor
     }
 

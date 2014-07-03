@@ -18,9 +18,9 @@ import org.mozilla.gecko.GeckoViewChrome;
 import org.mozilla.gecko.GeckoViewContent;
 import org.mozilla.gecko.PrefsHelper;
 
-public class DetailActivity extends Fragment {
+public class PostSearchFragment extends Fragment {
 
-    private static final String LOGTAG = "DetailActivity";
+    private static final String LOGTAG = "PostSearchFragment";
     private GeckoView geckoView;
 
 
