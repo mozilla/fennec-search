@@ -41,6 +41,8 @@ module.exports = function (grunt) {
 
     // A task for exporting src to a dest under the Mozilla source tree.
     grunt.task.registerMultiTask("export", "export from local to mozilla source tree.", function () {
+        grunt.task.run(["mozbuild"]);
+
         var options = this.options();
         options.dest = path.join(TREE, options.dest);
 
@@ -50,8 +52,59 @@ module.exports = function (grunt) {
         grunt.task.run(["rsync:" + taskName]);
     });
 
+    grunt.task.registerMultiTask("mozbuild", "Generate a mozbuild file from a local directory.", function () {
+        var done = this.async();
+
+        var options = this.options({
+        });
+
+        var fileNames = [];
+        this.files.forEach(function(file) {
+            file.src.forEach(function(src) {
+                fileNames.push(path.join(file.dest, src));
+            });
+        });
+        fileNames.sort(function (a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
+
+        var fs = require('fs');
+        var stream = fs.createWriteStream(options.dest);
+        stream
+            .once('open', function(fd) {
+                stream.write("# -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-\n");
+                stream.write("# vim: set filetype=python:\n");
+                stream.write("# This Source Code Form is subject to the terms of the Mozilla Public\n");
+                stream.write("# License, v. 2.0. If a copy of the MPL was not distributed with this\n");
+                stream.write("# file, You can obtain one at http://mozilla.org/MPL/2.0/.\n");
+                stream.write("\n");
+                stream.write(options.python_list + " = [\n");
+                fileNames.forEach(function (file) {
+                    stream.write("    '" + file + "',\n");
+                });
+                stream.write("]\n");
+                stream.end();
+            })
+            .once('finish', function () {
+                done();
+            });
+    });
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+
+        mozbuild: {
+            java: {
+                options: {
+                    dest: path.join(TREE, "mobile/android/search/search_activity_sources.mozbuild"),
+                    python_list: "search_activity_sources",
+                },
+
+                files: [
+                    { cwd: 'app/src/main/java', src: "**/*.java", dest: "java/" },
+                ],
+            },
+        },
         
         export: {
             options: {
