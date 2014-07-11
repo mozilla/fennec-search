@@ -61,6 +61,9 @@ module.exports = function (grunt) {
         var fileNames = [];
         this.files.forEach(function(file) {
             file.src.forEach(function(src) {
+                if (src.indexOf("MockHistory") >= 0) {
+                    return;
+                }
                 fileNames.push(path.join(file.dest, src));
             });
         });
@@ -99,13 +102,14 @@ module.exports = function (grunt) {
                     dest: path.join(TREE, "mobile/android/search/search_activity_sources.mozbuild"),
                     python_list: "search_activity_sources",
                 },
-
-                files: [
-                    { cwd: 'app/src/main/java', src: "**/*.java", dest: "java/" },
-                ],
+                files: [{
+                    cwd: "app/src/main/java",
+                    src: "org/mozilla/search/**/*.java",
+                    dest: "java/",
+                }],
             },
         },
-        
+
         export: {
             options: {
                 // args: ["--verbose"],
@@ -118,6 +122,7 @@ module.exports = function (grunt) {
                            "strings",
                            "manifests",
                          ],
+                    exclude: ["*BrowserContract.java", "*AppConstants.java", "*MockHistoryProvider.java"],
                     dest: "mobile/android/search/",
                 }
             },

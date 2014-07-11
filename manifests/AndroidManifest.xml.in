@@ -22,6 +22,11 @@
 #include SearchAndroidManifest_services.xml.in
 
         <uses-library android:name="android.test.runner" />
+        <provider
+            android:name=".stream.MockHistoryProvider"
+            android:authorities="org.mozilla.search.stream.MockHistoryProvider"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 
 </manifest>
