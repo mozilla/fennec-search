@@ -4,81 +4,61 @@
 
 package org.mozilla.search.autocomplete;
 
-import android.app.Activity;
-import android.database.Cursor;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * A single entry point for querying all agents.
- * <p/>
- * An agent is responsible for querying some underlying data source. It could be a
- * flat file, or a REST endpoint, or a content provider.
+ * A mediator between an ArrayAdapter and asynchronous search providers.
+ *
+ * Clients instantiate this class with an ArrayAdapter into which
+ * results are placed. To retrieve new suggestions, a client calls `getSuggestions`;
+ * the method returns to the caller directly, but utilizes a
+ * background thread to fetch search suggestions.
  */
-class AutoCompleteAgentManager {
+class AutoCompleteAgentManager extends AutoCompleteBaseAgent implements AcceptsSearchResults {
+    private AutoCompleteYahooAgent yahooAgent;
 
-    private final Handler mainUiHandler;
-    private final Handler localHandler;
-    private final AutoCompleteWordListAgent autoCompleteWordListAgent;
-
-    public AutoCompleteAgentManager(Activity activity, Handler mainUiHandler) {
-        HandlerThread thread = new HandlerThread("org.mozilla.search.autocomplete.SuggestionAgent");
-        // TODO: Where to kill this thread?
-        thread.start();
-        Log.i("AUTOCOMPLETE", "Starting thread");
-        this.mainUiHandler = mainUiHandler;
-        localHandler = new SuggestionMessageHandler(thread.getLooper());
-        autoCompleteWordListAgent = new AutoCompleteWordListAgent(activity);
+    public AutoCompleteAgentManager(Looper foregroundLooper, AcceptsSearchResults callback) throws AgentException {
+        super(foregroundLooper, callback);
+        try {
+            yahooAgent = new AutoCompleteYahooAgent(foregroundLooper, this);
+        } catch (AgentException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Process the next incoming query.
+     * Delegate the search query to the yahooAgent. In the future, this could
+     * send queries to other agents as well in parallel.
      */
-    public void search(String queryString) {
-        // TODO check if there's a pending search.. not sure how to handle that.
-        localHandler.sendMessage(localHandler.obtainMessage(0, queryString));
+    @Override
+    List<AutoCompleteModel> processQueryInBackground(String queryString) {
+        if (yahooAgent != null) {
+            yahooAgent.startSearch(queryString);
+        }
+
+        // Since we are delegating the work to the YahooAgent, we return null here.
+        // This instructs the background thread to *not* send a notification
+        // to the callback handler. Instead, we wait until the results are
+        // returned within `onSuggestionsReceived`, and forward the results
+        // to our callback handler.
+        return null;
+    }
+
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        if (yahooAgent != null) {
+            yahooAgent.shutdown();
+        }
     }
 
     /**
-     * This background thread runs the queries; the results get sent back through mainUiHandler
-     * <p/>
-     * TODO: Refactor this wordlist search and add other search providers (eg: Yahoo)
+     * Send the results from our agent back to the callback handler.
      */
-    private class SuggestionMessageHandler extends Handler {
-
-        private SuggestionMessageHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (null == msg.obj) {
-                return;
-            }
-
-            Cursor cursor =
-                    autoCompleteWordListAgent.getWordMatches(((String) msg.obj).toLowerCase());
-            ArrayList<AutoCompleteModel> res = new ArrayList<AutoCompleteModel>();
-
-            if (null == cursor) {
-                return;
-            }
-
-            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                res.add(new AutoCompleteModel(cursor.getString(
-                        cursor.getColumnIndex(AutoCompleteWordListAgent.COL_WORD))));
-            }
-
-
-            mainUiHandler.sendMessage(Message.obtain(mainUiHandler, 0, res));
-        }
-
+    @Override
+    public void onSuggestionsReceived(List<AutoCompleteModel> results, AutoCompleteBaseAgent worker) {
+        getCallback().onSuggestionsReceived(results, this);
     }
-
 }

@@ -20,5 +20,16 @@ public class Constants {
     public static final String PRESEARCH_FRAGMENT = "org.mozilla.search.PRESEARCH_FRAGMENT";
     public static final String SEARCH_FRAGMENT = "org.mozilla.search.SEARCH_FRAGMENT";
 
-    public static final String AUTOCOMPLETE_ROW_LIMIT = "5";
+    /**
+     * The number of results to request from search providers.
+     */
+    public static final int AUTOCOMPLETE_MAX_REQUESTS = 5;
+
+    /**
+     * The number of rows to show on the UI. This might need to
+     * be tweaked depending on the device's screen size.
+     */
+    public static final int AUTOCOMPLETE_ROW_LIMIT = 5;
+    public static final String YAHOO_URL_PATTERN = "https://search.yahoo.com/sugg/ff?appid=ffm&nresults=%d&command=%s";
+
 }
