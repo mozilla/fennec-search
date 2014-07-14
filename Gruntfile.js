@@ -37,6 +37,7 @@ module.exports = function (grunt) {
         grunt.config("shell." + taskName + ".command", args.join(" "));
 
         grunt.task.run(["shell:" + taskName]);
+        grunt.task.run("copy");
     });
 
     // A task for exporting src to a dest under the Mozilla source tree.
@@ -93,6 +94,16 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
+
+        copy: {
+            main: {
+                files: [{
+                    src: path.join(TREE, "mobile/android/base/db/BrowserContract.java"),
+                    dest: "app/src/main/java/org/mozilla/gecko/db/BrowserContract.java",
+                }],
+            }
+        },
+
         mozbuild: {
             java: {
                 options: {
@@ -100,9 +111,11 @@ module.exports = function (grunt) {
                     python_list: "search_activity_sources",
                 },
 
-                files: [
-                    { cwd: 'app/src/main/java', src: "**/*.java", dest: "java/" },
-                ],
+                files: [{
+                    cwd: "app/src/main/java",
+                    src: "org/mozilla/search/**/*.java",
+                    dest: "java/",
+                }],
             },
         },
         
@@ -119,6 +132,7 @@ module.exports = function (grunt) {
                            "manifests",
                          ],
                     dest: "mobile/android/search/",
+                    exclude: ["*BrowserContract.java"],
                 }
             },
             res: {
