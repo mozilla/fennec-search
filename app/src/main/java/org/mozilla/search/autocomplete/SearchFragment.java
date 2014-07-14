@@ -118,7 +118,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         autoCompleteAgentManager =
                 new AutoCompleteAgentManager(getActivity(), new MainUiHandler(autoCompleteAdapter));
 
-        // This will hide the autocomplete box and background frame. Bug 1038775.
+        // This will hide the autocomplete box and background frame.
         transitionToWaiting();
 
         // Attach listener for tapping on a suggestion.
