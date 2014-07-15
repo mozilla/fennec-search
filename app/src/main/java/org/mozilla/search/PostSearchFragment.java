@@ -62,6 +62,7 @@ public class PostSearchFragment extends Fragment {
     public void startSearch(String query) {
         setUrl(Constants.YAHOO_WEB_SEARCH_BASE_URL + Uri.encode(query));
     }
+
     public void setUrl(String url) {
         webview.loadUrl(url);
     }
