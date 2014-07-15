@@ -15,10 +15,5 @@ buildscript {
 allprojects {
     repositories {
         mavenCentral()
-        // Mozilla repo for GeckoView. From more info, see:
-        // http://www.ncalexander.net/blog/2014/07/10/build-your-own-browser-a-maven-repository-for-geckoview/
-        maven {
-            url 'https://ci.mozilla.org/job/mozilla-central-geckoview/mozilla-central_Maven_Repository'
-        }
     }
 }
