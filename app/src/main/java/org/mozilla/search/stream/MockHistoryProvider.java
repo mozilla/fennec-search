@@ -38,7 +38,7 @@ public class MockHistoryProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return 1;
     }
 
     @Override
