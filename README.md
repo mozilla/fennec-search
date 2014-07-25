@@ -1,5 +1,24 @@
 # Fennec Search Activity
 
+## Building with Fennec
+
+The search activity lives in Mozilla Central, but it currently is disabaled
+behind a build flag. In order to build Fennec with the search activity
+enabled:
+
+1) Edit mobile/android/confvars.sh, and uncomment the following line:
+
+```
+# Don't enable the Search Activity.
+MOZ_ANDROID_SEARCH_ACTIVITY=1
+```
+
+2) Notify the build system of the configuration change:
+
+```
+mach configure
+```
+
 ## grunt
 
 The Search Activity repository uses [grunt](http://gruntjs.com/) tasks to
