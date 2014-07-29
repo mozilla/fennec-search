@@ -147,6 +147,12 @@ module.exports = function (grunt) {
                     exclude: ["strings.xml.in"],
                 }
             },
+            res: {
+                options: {
+                    src: "res",
+                    dest: "mobile/android/base/resources/",
+                }
+            },
             branding: {
                 options: {
                     src: "branding",
