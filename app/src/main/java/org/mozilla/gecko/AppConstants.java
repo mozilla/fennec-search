@@ -16,6 +16,9 @@ package org.mozilla.gecko;
  */
 public class AppConstants {
     public static final String ANDROID_PACKAGE_NAME = "org.mozilla.fennec";
+    // TEMPORARY: Only in the search activity so that it doesn't fall down when launching itself
+    //            When this code is moved into Fennec this should be renamed to match ANDROID_PACKAGE_NAME
+    public static final String SEARCH_PACKAGE_NAME = "org.mozilla.search";
     public static final String MANGLED_ANDROID_PACKAGE_NAME = "@MANGLED_ANDROID_PACKAGE_NAME@";
 
     /**

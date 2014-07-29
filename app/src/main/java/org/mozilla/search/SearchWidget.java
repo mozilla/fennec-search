@@ -22,7 +22,7 @@ import android.util.Log;
  * and one to launch the search activity. All intents are actually sent back
  * here and then forwarded on to start the real activity. */
 public class SearchWidget extends AppWidgetProvider {
-    final private static String LOGTAG = "GeckoLauncherWidget";
+    final private static String LOGTAG = "GeckoSearchWidget";
 
     final public static String ACTION_LAUNCH_BROWSER = "org.mozilla.widget.LAUNCH_BROWSER";
     final public static String ACTION_LAUNCH_SEARCH = "org.mozilla.widget.LAUNCH_SEARCH";
@@ -31,7 +31,7 @@ public class SearchWidget extends AppWidgetProvider {
     public void onUpdate(final Context context, final AppWidgetManager manager, final int[] ids) {
         for (int id : ids) {
             final Bundle bundle;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (Build.VERSION.SDK_INT >= 16) {
                 bundle = manager.getAppWidgetOptions(id);
             } else {
                 bundle = null;
@@ -48,20 +48,23 @@ public class SearchWidget extends AppWidgetProvider {
                                           final int id,
                                           final Bundle options) {
         addView(manager, context, id, options);
-        super.onAppWidgetOptionsChanged(context, manager, id, options);
+        if (Build.VERSION.SDK_INT >= 16) {
+            super.onAppWidgetOptionsChanged(context, manager, id, options);
+        }
     }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         // This will hold the intent to redispatch
         final Intent redirect;
-        Log.i(LOGTAG, "Got intent  " + intent.getAction());
         if (intent.getAction().equals(ACTION_LAUNCH_BROWSER)) {
             redirect = buildRedirectIntent(Intent.ACTION_VIEW,
+                                           AppConstants.ANDROID_PACKAGE_NAME,
                                            AppConstants.BROWSER_INTENT_CLASS_NAME,
                                            intent);
         } else if (intent.getAction().equals(ACTION_LAUNCH_SEARCH)) {
             redirect = buildRedirectIntent(Intent.ACTION_VIEW,
+                                           AppConstants.SEARCH_PACKAGE_NAME,
                                            AppConstants.SEARCH_INTENT_CLASS_NAME,
                                            intent);
         } else {
@@ -69,7 +72,14 @@ public class SearchWidget extends AppWidgetProvider {
         }
 
         if (redirect != null) {
-            context.startActivity(redirect);
+            try {
+                context.startActivity(redirect);
+            } catch(Exception ex) {
+                // When this is built stand alone, its hardcoded to try and launch nightly.
+                // If that fails, just fire a generic VIEW intent.
+                Intent redirect2 = buildRedirectIntent(Intent.ACTION_VIEW, null, null, intent);
+                context.startActivity(redirect2);
+            }
         }
 
         super.onReceive(context, intent);
@@ -97,9 +107,11 @@ public class SearchWidget extends AppWidgetProvider {
     }
 
     // Utility for building an intent to be redispatched (i.e. to launch the browser or the search intent).
-    private Intent buildRedirectIntent(final String action, final String className, final Intent source) {
+    private Intent buildRedirectIntent(final String action, final String pkg, final String className, final Intent source) {
         final Intent activity = new Intent(action);
-        activity.setClassName(AppConstants.ANDROID_PACKAGE_NAME, className);
+        if (pkg != null && className != null) {
+            activity.setClassName(pkg, className);
+        }
         activity.setData(source.getData());
         activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return activity;
