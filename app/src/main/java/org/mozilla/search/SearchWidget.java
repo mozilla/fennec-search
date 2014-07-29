@@ -13,6 +13,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.util.Log;
@@ -29,7 +30,12 @@ public class SearchWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(final Context context, final AppWidgetManager manager, final int[] ids) {
         for (int id : ids) {
-            final Bundle bundle = manager.getAppWidgetOptions(id);
+            final Bundle bundle;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                bundle = manager.getAppWidgetOptions(id);
+            } else {
+                bundle = null;
+            }
             addView(manager, context, id, bundle);
         }
 
