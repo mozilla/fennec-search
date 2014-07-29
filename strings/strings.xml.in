@@ -4,6 +4,7 @@
 
 <!-- For standalone running. -->
 <!ENTITY brandShortName "Local Firefox">
+<!ENTITY new_tab "New Tab">
 
 <!ENTITY formatS "&#037;s">
 <!ENTITY formatS1 "&#037;1&#036;s">
@@ -17,4 +18,5 @@
 
 <resources>
 #include search_strings.xml.in
+    <string name="new_tab">&new_tab;</string>
 </resources>

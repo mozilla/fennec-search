@@ -8,6 +8,8 @@
 
     <color name="highlight_orange">#FF9500</color>
 
+    <color name="text_color_primary">#222222</color>
+
     <!-- card colors -->
     <color name="card_background">#ffffff</color>
     <color name="card_border">#BFBFBF</color>
