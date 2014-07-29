@@ -130,7 +130,7 @@ module.exports = function (grunt) {
                 options: {
                     src: "app/src/main/res",
                     dest: "mobile/android/search/",
-                    exclude: ["*strings.xml", "ic_url_bar_search.png", "launcher_widget.png"],
+                    exclude: ["*strings.xml", "ic_url_bar_search.png", "launcher_widget.png", "icon.png"],
                 }
             },
             manifests: {
