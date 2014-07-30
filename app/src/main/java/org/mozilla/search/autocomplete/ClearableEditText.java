@@ -12,6 +12,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -19,9 +21,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
+import com.nineoldandroids.view.ViewHelper;
+
 import org.mozilla.search.R;
 
 public class ClearableEditText extends FrameLayout {
+
+    private static final int ANIMATION_DURATION = 200;
+    private static final Interpolator BOUNCE_INTERPOLATOR = new BounceInterpolator();
 
     private EditText editText;
     private ImageButton clearButton;
@@ -30,6 +40,8 @@ public class ClearableEditText extends FrameLayout {
     private TextListener listener;
 
     private boolean active;
+
+    private boolean clearButtonVisible;
 
     public interface TextListener {
         public void onChange(String text);
@@ -56,6 +68,8 @@ public class ClearableEditText extends FrameLayout {
                 if (listener != null) {
                     listener.onChange(s.toString());
                 }
+
+                animateClearButton(s.length() > 0);
             }
         });
 
@@ -72,12 +86,17 @@ public class ClearableEditText extends FrameLayout {
         });
 
         clearButton = (ImageButton) findViewById(R.id.clear_button);
-        clearButton.setOnClickListener(new View.OnClickListener(){
+        clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText("");
             }
         });
+
+        // Initialize clear button in invisible state.
+        clearButtonVisible = false;
+        ViewHelper.setScaleX(clearButton, 0);
+        ViewHelper.setScaleY(clearButton, 0);
 
         inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
@@ -95,7 +114,7 @@ public class ClearableEditText extends FrameLayout {
         }
         this.active = active;
 
-        clearButton.setVisibility(active ? View.VISIBLE : View.GONE);
+        animateClearButton(active);
 
         editText.setFocusable(active);
         editText.setFocusableInTouchMode(active);
@@ -110,6 +129,31 @@ public class ClearableEditText extends FrameLayout {
             editText.clearFocus();
             inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         }
+    }
+
+    /**
+     * Animates clear button between visible/invisible states.
+     * @param visible
+     */
+    private void animateClearButton(boolean visible) {
+        if (visible == clearButtonVisible) {
+            return;
+        }
+        clearButtonVisible = visible;
+
+        final float startScale = visible ? 0 : 1;
+        final float endScale = visible ? 1 : 0;
+
+        final AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(clearButton, "scaleX", startScale, endScale),
+                ObjectAnimator.ofFloat(clearButton, "scaleY", startScale, endScale)
+        );
+        set.setDuration(ANIMATION_DURATION);
+        if (visible) {
+            set.setInterpolator(BOUNCE_INTERPOLATOR);
+        }
+        set.start();
     }
 
     public void setTextListener(TextListener listener) {

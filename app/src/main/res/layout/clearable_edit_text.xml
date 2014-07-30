@@ -29,6 +29,6 @@
         android:background="@android:color/transparent"
         android:src="@drawable/search_clear"
         android:scaleType="centerInside"
-        android:visibility="gone"/>
+        android:contentDescription="@string/search_clear"/>
 
 </merge>
