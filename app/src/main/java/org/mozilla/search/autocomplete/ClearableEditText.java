@@ -69,7 +69,9 @@ public class ClearableEditText extends FrameLayout {
                     listener.onChange(s.toString());
                 }
 
-                animateClearButton(s.length() > 0);
+                if (active) {
+                    animateClearButton(s.length() > 0);
+                }
             }
         });
 
