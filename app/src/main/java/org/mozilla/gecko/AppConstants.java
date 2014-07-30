@@ -5,6 +5,8 @@
 
 package org.mozilla.gecko;
 
+import android.os.Build;
+
 /**
  * A collection of constants that pertain to the build and runtime state of the
  * application. Typically these are sourced from build-time definitions (see
@@ -20,6 +22,42 @@ public class AppConstants {
     //            When this code is moved into Fennec this should be renamed to match ANDROID_PACKAGE_NAME
     public static final String SEARCH_PACKAGE_NAME = "org.mozilla.search";
     public static final String MANGLED_ANDROID_PACKAGE_NAME = "@MANGLED_ANDROID_PACKAGE_NAME@";
+    /**
+     * Encapsulates access to compile-time version definitions, allowing
+     * for dead code removal for particular APKs.
+     */
+    public static final class Versions {
+        public static final int MIN_SDK_VERSION = 9;
+        public static final int MAX_SDK_VERSION = 21;
+
+        /*
+         * The SDK_INT >= N check can only pass if our MAX_SDK_VERSION is
+         * _greater than or equal_ to that number, because otherwise we
+         * won't be installed on the device.
+         *
+         * If MIN_SDK_VERSION is greater than or equal to the number, there
+         * is no need to do the runtime check.
+         */
+        public static final boolean feature10Plus = MIN_SDK_VERSION >= 10 || (MAX_SDK_VERSION >= 10 && Build.VERSION.SDK_INT >= 10);
+        public static final boolean feature11Plus = MIN_SDK_VERSION >= 11 || (MAX_SDK_VERSION >= 11 && Build.VERSION.SDK_INT >= 11);
+        public static final boolean feature12Plus = MIN_SDK_VERSION >= 12 || (MAX_SDK_VERSION >= 12 && Build.VERSION.SDK_INT >= 12);
+        public static final boolean feature14Plus = MIN_SDK_VERSION >= 14 || (MAX_SDK_VERSION >= 14 && Build.VERSION.SDK_INT >= 14);
+        public static final boolean feature15Plus = MIN_SDK_VERSION >= 15 || (MAX_SDK_VERSION >= 15 && Build.VERSION.SDK_INT >= 15);
+        public static final boolean feature16Plus = MIN_SDK_VERSION >= 16 || (MAX_SDK_VERSION >= 16 && Build.VERSION.SDK_INT >= 16);
+        public static final boolean feature17Plus = MIN_SDK_VERSION >= 17 || (MAX_SDK_VERSION >= 17 && Build.VERSION.SDK_INT >= 17);
+        public static final boolean feature19Plus = MIN_SDK_VERSION >= 19 || (MAX_SDK_VERSION >= 19 && Build.VERSION.SDK_INT >= 19);
+
+        /*
+         * If our MIN_SDK_VERSION is 14 or higher, we must be an ICS device.
+         * If our MAX_SDK_VERSION is lower than ICS, we must not be an ICS device.
+         * Otherwise, we need a range check.
+         */
+        public static final boolean preJB = MAX_SDK_VERSION < 16 || (MIN_SDK_VERSION < 16 && Build.VERSION.SDK_INT < 16);
+        public static final boolean preICS = MAX_SDK_VERSION < 14 || (MIN_SDK_VERSION < 14 && Build.VERSION.SDK_INT < 14);
+        public static final boolean preHCMR2 = MAX_SDK_VERSION < 13 || (MIN_SDK_VERSION < 13 && Build.VERSION.SDK_INT < 13);
+        public static final boolean preHCMR1 = MAX_SDK_VERSION < 12 || (MIN_SDK_VERSION < 12 && Build.VERSION.SDK_INT < 12);
+        public static final boolean preHC = MAX_SDK_VERSION < 11 || (MIN_SDK_VERSION < 11 && Build.VERSION.SDK_INT < 11);
+    }
 
     /**
      * The name of the Java class that launches the browser.
