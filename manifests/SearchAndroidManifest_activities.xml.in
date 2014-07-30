@@ -17,7 +17,7 @@
         </activity>
 
         <!-- Basic launcher widget. -->
-        <receiver android:name="org.mozilla.gecko.SearchWidget"
+        <receiver android:name="org.mozilla.search.SearchWidget"
                   android:label="@string/search_widget_name">
 
             <intent-filter>

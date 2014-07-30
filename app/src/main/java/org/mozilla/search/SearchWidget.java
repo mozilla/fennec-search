@@ -31,7 +31,7 @@ public class SearchWidget extends AppWidgetProvider {
     public void onUpdate(final Context context, final AppWidgetManager manager, final int[] ids) {
         for (int id : ids) {
             final Bundle bundle;
-            if (Build.VERSION.SDK_INT >= 16) {
+            if (AppConstants.Versions.feature16Plus) {
                 bundle = manager.getAppWidgetOptions(id);
             } else {
                 bundle = null;
@@ -48,7 +48,7 @@ public class SearchWidget extends AppWidgetProvider {
                                           final int id,
                                           final Bundle options) {
         addView(manager, context, id, options);
-        if (Build.VERSION.SDK_INT >= 16) {
+        if (AppConstants.Versions.feature16Plus) {
             super.onAppWidgetOptionsChanged(context, manager, id, options);
         }
     }
