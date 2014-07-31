@@ -1,0 +1,8 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!--Colors that ship with Fennec and shouldn't be merged with `grunt export`.-->
+<resources>
+    <color name="text_color_primary">#222222</color>
+</resources>
