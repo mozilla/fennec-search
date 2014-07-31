@@ -122,7 +122,13 @@ module.exports = function (grunt) {
                            "strings",
                            "manifests",
                          ],
-                    exclude: ["*BrowserContract.java", "*AppConstants.java", "*MockHistoryProvider.java"],
+                    exclude: [
+                        "*AppConstants.java",
+                        "*BrowserContract.java",
+                        "*MockHistoryProvider.java",
+                        "*Telemetry.java",
+                        "*TelemetryContract.java"
+                    ],
                     dest: "mobile/android/search/",
                 }
             },
