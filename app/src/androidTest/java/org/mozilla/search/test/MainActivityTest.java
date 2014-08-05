@@ -9,7 +9,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import org.mozilla.search.Constants;
 import org.mozilla.search.MainActivity;
 import org.mozilla.search.PostSearchFragment;
-import org.mozilla.search.autocomplete.SearchFragment;
+import org.mozilla.search.autocomplete.SuggestionsFragment;
 import org.mozilla.search.PreSearchFragment;
 
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
@@ -83,8 +83,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                 .getSupportFragmentManager().findFragmentByTag(Constants.PRESEARCH_FRAGMENT);
     }
 
-    private SearchFragment getSearchFragment() {
-        return (SearchFragment) getActivity()
+    private SuggestionsFragment getSearchFragment() {
+        return (SuggestionsFragment) getActivity()
                 .getSupportFragmentManager().findFragmentByTag(Constants.SEARCH_FRAGMENT);
     }
 
