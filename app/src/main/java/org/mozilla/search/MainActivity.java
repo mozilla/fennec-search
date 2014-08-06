@@ -34,9 +34,9 @@ import org.mozilla.search.autocomplete.SuggestionsFragment;
  */
 public class MainActivity extends FragmentActivity implements AcceptsSearchQuery {
 
-    private static final String KEY_QUERY = "search_term";
     private static final String KEY_SEARCH_STATE = "search_state";
     private static final String KEY_EDIT_STATE = "edit_state";
+    private static final String KEY_QUERY = "query";
 
     static enum SearchState {
         PRESEARCH,
