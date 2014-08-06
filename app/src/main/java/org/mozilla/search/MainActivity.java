@@ -6,10 +6,12 @@ package org.mozilla.search;
 
 import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -74,6 +76,7 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
     @Override
     protected void onCreate(Bundle stateBundle) {
         super.onCreate(stateBundle);
+
         setContentView(R.layout.search_activity_main);
 
         queryHandler = new AsyncQueryHandler(getContentResolver()) {};
@@ -125,6 +128,9 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
         cardPaddingX = getResources().getDimensionPixelSize(R.dimen.card_background_padding_x);
         cardPaddingY = getResources().getDimensionPixelSize(R.dimen.card_background_padding_y);
         textEndY = getResources().getDimensionPixelSize(R.dimen.animation_text_translation_y);
+
+        // Initialize the activity in the presearch state.
+        setSearchState(SearchState.PRESEARCH);
     }
 
     @Override
@@ -153,11 +159,12 @@ public class MainActivity extends FragmentActivity implements AcceptsSearchQuery
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // When the app launches, make sure we're in presearch *always*
+    public void onNewIntent(Intent intent) {
+        // Reset the activity in the presearch state if it was launched from a new intent.
         setSearchState(SearchState.PRESEARCH);
+
+        // Also clear any existing search term.
+        editText.setText("");
     }
 
     @Override
