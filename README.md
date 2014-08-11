@@ -1,23 +1,8 @@
 # Fennec Search Activity
 
-## Building with Fennec
+This is a stand-alone version of the search activity that is built with Firefox for Android. The main source code lives in [mozilla-central](http://hg.mozilla.org/mozilla-central/), but this repo is a tool to make development easier.
 
-The search activity lives in Mozilla Central, but it currently is disabaled
-behind a build flag. In order to build Fennec with the search activity
-enabled:
-
-1) Edit mobile/android/confvars.sh, and uncomment the following line:
-
-```
-# Don't enable the Search Activity.
-MOZ_ANDROID_SEARCH_ACTIVITY=1
-```
-
-2) Notify the build system of the configuration change:
-
-```
-mach configure
-```
+Development happens in the Firefox for Android::Search Activity [bugzilla component](https://bugzilla.mozilla.org/buglist.cgi?quicksearch=prod%3Aandroid%20component%3Asearch&list_id=10980886).
 
 ## grunt
 
