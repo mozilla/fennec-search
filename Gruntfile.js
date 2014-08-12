@@ -126,7 +126,6 @@ module.exports = function (grunt) {
                         "*AppConstants.java",
                         "*BrowserContract.java",
                         "*MockHistoryProvider.java",
-                        "*SuggestClient.java",
                         "*Telemetry.java",
                         "*TelemetryContract.java"
                     ],
