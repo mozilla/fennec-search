@@ -127,6 +127,7 @@ module.exports = function (grunt) {
                         "*BrowserContract.java",
                         "*GeckoSharedPrefs.java",
                         "*MockHistoryProvider.java",
+                        "*SuggestClient.java",
                         "*Telemetry.java",
                         "*TelemetryContract.java"
                     ],
