@@ -140,7 +140,7 @@ module.exports = function (grunt) {
                     dest: "mobile/android/search/",
                     exclude: [
                         "fennec_colors.xml",
-                        "icon.png",
+                        "widget_icon.png",
                         "ic_url_bar_search.png",
                         "launcher_widget.png",
                         "*strings.xml",
