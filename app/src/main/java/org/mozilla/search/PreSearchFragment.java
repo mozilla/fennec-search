@@ -5,10 +5,12 @@
 package org.mozilla.search;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -16,11 +18,24 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
 
 import org.mozilla.gecko.Telemetry;
 import org.mozilla.gecko.TelemetryContract;
@@ -35,6 +50,7 @@ public class PreSearchFragment extends Fragment {
 
     private AcceptsSearchQuery searchListener;
     private SimpleCursorAdapter cursorAdapter;
+    private ContentResolver contentResolver;
 
     private ListView listView;
 
@@ -57,6 +73,7 @@ public class PreSearchFragment extends Fragment {
 
         if (activity instanceof AcceptsSearchQuery) {
             searchListener = (AcceptsSearchQuery) activity;
+            contentResolver = activity.getContentResolver();
         } else {
             throw new ClassCastException(activity.toString() + " must implement AcceptsSearchQuery.");
         }
@@ -115,6 +132,36 @@ public class PreSearchFragment extends Fragment {
             }
         });
 
+        final SwipeGestureListener swipeGestureListener = new SwipeGestureListener(listView, new OnSwipeRemoveListener() {
+            @Override
+            public void onRemove(View v) {
+                Log.i("MMM", "onRemove: " + v);
+
+                final String query = "test";
+
+                final AsyncTask<Void, Void, Boolean> clearHistoryTask = new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... params) {
+                        final int numDeleted = contentResolver.delete(
+                                BrowserContract.SearchHistory.CONTENT_URI,
+                                BrowserContract.SearchHistory.QUERY + " = ? ",
+                                new String[] { query });
+                        return numDeleted >= 0;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean success) {
+                        if (!success) {
+                            Log.e("MMM", "Error clearing search history.");
+                        }
+                    }
+                };
+                clearHistoryTask.execute();
+            }
+        });
+        listView.setOnScrollListener(swipeGestureListener);
+        listView.setOnTouchListener(swipeGestureListener);
+
         // Apply click handler to settings button.
         mainView.findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +197,282 @@ public class PreSearchFragment extends Fragment {
         public void onLoaderReset(Loader<Cursor> loader) {
             if (cursorAdapter != null) {
                 cursorAdapter.swapCursor(null);
+            }
+        }
+    }
+
+    private interface OnSwipeRemoveListener {
+        public void onRemove(View v);
+    }
+
+    private class SwipeGestureListener implements AbsListView.OnScrollListener, View.OnTouchListener {
+        // same value the stock browser uses for after drag animation velocity in pixels/sec
+        // http://androidxref.com/4.0.4/xref/packages/apps/Browser/src/com/android/browser/NavTabScroller.java#61
+        private static final float MIN_VELOCITY = 750;
+
+        private final AbsListView absListView;
+        private final OnSwipeRemoveListener listener;
+
+        private final int swipeThreshold;
+        private final int minFlingVelocity;
+        private final int maxFlingVelocity;
+
+        private int listWidth;
+        private VelocityTracker velocityTracker;
+        private View swipeView;
+        private Runnable pendingCheckForTap;
+
+        private float swipeStartX;
+        private boolean swiping;
+
+        private boolean enabled = true;
+
+        public SwipeGestureListener(AbsListView absListView, OnSwipeRemoveListener listener) {
+            this.absListView = absListView;
+            this.listener = listener;
+
+            final ViewConfiguration vc = ViewConfiguration.get(absListView.getContext());
+            swipeThreshold = vc.getScaledTouchSlop();
+            minFlingVelocity = (int) (absListView.getContext().getResources().getDisplayMetrics().density * MIN_VELOCITY);
+            maxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            enabled = (scrollState != AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL);
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int i, int i1, int i2) {
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent e) {
+            if (!enabled) {
+                return false;
+            }
+
+            if (listWidth == 0) {
+                listWidth = absListView.getWidth();
+            }
+
+            switch (e.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN: {
+                    // Check if we should set pressed state on the
+                    // touched view after a standard delay.
+                    triggerCheckForTap();
+
+                    final float x = e.getRawX();
+                    final float y = e.getRawY();
+
+                    // Find out which view is being touched
+                    swipeView = findViewAt(x, y);
+
+                    if (swipeView != null) {
+                        swipeStartX = e.getRawX();
+
+                        velocityTracker = VelocityTracker.obtain();
+                        velocityTracker.addMovement(e);
+                    }
+
+                    view.onTouchEvent(e);
+                    return true;
+                }
+
+                case MotionEvent.ACTION_UP: {
+                    if (swipeView == null) {
+                        break;
+                    }
+
+                    cancelCheckForTap();
+                    swipeView.setPressed(false);
+
+                    if (!swiping) {
+                        velocityTracker.recycle();
+                        velocityTracker = null;
+                        break;
+                    }
+
+                    velocityTracker.addMovement(e);
+                    velocityTracker.computeCurrentVelocity(1000, maxFlingVelocity);
+
+                    final float velocityX = Math.abs(velocityTracker.getXVelocity());
+                    final float velocityY = Math.abs(velocityTracker.getYVelocity());
+
+                    boolean dismiss = false;
+                    boolean dismissDirection = false;
+
+                    final float deltaX = ViewHelper.getTranslationX(swipeView);
+                    if (Math.abs(deltaX) > listWidth / 2) {
+                        dismiss = true;
+                        dismissDirection = (deltaX > 0);
+                    } else if (minFlingVelocity <= velocityX && velocityX <= maxFlingVelocity
+                            && velocityY < velocityX) {
+                        dismiss = swiping && (deltaX * velocityTracker.getXVelocity() > 0);
+                        dismissDirection = (velocityTracker.getXVelocity() > 0);
+                    }
+
+                    if (dismiss) {
+                        final int dismissTranslation = (dismissDirection ? listWidth : -listWidth);
+                        animateRemove(swipeView, dismissTranslation);
+                    } else {
+                        animateCancel(swipeView);
+                    }
+
+                    velocityTracker.recycle();
+                    velocityTracker = null;
+                    swipeView = null;
+
+                    swipeStartX = 0;
+                    swiping = false;
+
+                    break;
+                }
+
+                case MotionEvent.ACTION_MOVE: {
+                    if (swipeView == null || velocityTracker == null) {
+                        break;
+                    }
+                    velocityTracker.addMovement(e);
+
+                    final float delta = e.getRawX() - swipeStartX;
+                    final boolean isSwipingToClose = Math.abs(delta) > swipeThreshold;
+
+                    // If we're actually swiping, make sure we don't
+                    // set pressed state on the swiped view.
+                    if (isSwipingToClose) {
+                        cancelCheckForTap();
+
+                        swiping = true;
+                        absListView.requestDisallowInterceptTouchEvent(true);
+
+                        // Stops listview from highlighting the touched item
+                        // in the list when swiping.
+                        MotionEvent cancelEvent = MotionEvent.obtain(e);
+                        cancelEvent.setAction(MotionEvent.ACTION_CANCEL |
+                                (e.getActionIndex() << MotionEvent.ACTION_POINTER_INDEX_SHIFT));
+                        absListView.onTouchEvent(cancelEvent);
+                        cancelEvent.recycle();
+
+                        ViewHelper.setTranslationX(swipeView, delta);
+                        ViewHelper.setAlpha(swipeView, Math.max(0.1f, Math.min(1f,
+                                1f - 2f * Math.abs(delta) / listWidth)));
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        private void animateRemove(final View view, int pos) {
+            final AnimatorSet set = new AnimatorSet();
+            set.playTogether(
+                    ObjectAnimator.ofFloat(view, "alpha", 0),
+                    ObjectAnimator.ofFloat(view, "translationX", pos)
+            );
+            set.setDuration(250);
+
+            set.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animateFinishRemove(view);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+
+            set.start();
+        }
+
+        private void animateFinishRemove(final View view) {
+            final int height = view.getHeight();
+            final Animation anim = new Animation() {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    view.getLayoutParams().height = Math.round((height * (1 - interpolatedTime)));
+                    view.requestLayout();
+                }
+            };
+            anim.setDuration(250);
+            anim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    listener.onRemove(view);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            view.startAnimation(anim);
+        }
+
+        private void animateCancel(final View view) {
+            final AnimatorSet set = new AnimatorSet();
+            set.playTogether(
+                    ObjectAnimator.ofFloat(view, "alpha", 1),
+                    ObjectAnimator.ofFloat(view, "translationX", 0)
+            );
+            set.setDuration(250);
+            set.start();
+        }
+
+        private View findViewAt(float rawX, float rawY) {
+            final Rect rect = new Rect();
+
+            final int[] listViewCoords = new int[2];
+            absListView.getLocationOnScreen(listViewCoords);
+
+            final int x = (int) rawX - listViewCoords[0];
+            final int y = (int) rawY - listViewCoords[1];
+
+            for (int i = 0; i < absListView.getChildCount(); i++) {
+                final View child = absListView.getChildAt(i);
+                child.getHitRect(rect);
+
+                if (rect.contains(x, y)) {
+                    return child;
+                }
+            }
+
+            return null;
+        }
+
+        private void triggerCheckForTap() {
+            if (pendingCheckForTap == null) {
+                pendingCheckForTap = new CheckForTap();
+            }
+            absListView.postDelayed(pendingCheckForTap, ViewConfiguration.getTapTimeout());
+        }
+
+        private void cancelCheckForTap() {
+            if (pendingCheckForTap == null) {
+                return;
+            }
+            absListView.removeCallbacks(pendingCheckForTap);
+        }
+
+        private class CheckForTap implements Runnable {
+            @Override
+            public void run() {
+                if (!swiping && swipeView != null && enabled) {
+                    swipeView.setPressed(true);
+                }
             }
         }
     }

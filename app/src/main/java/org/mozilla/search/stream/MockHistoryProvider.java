@@ -38,7 +38,19 @@ public class MockHistoryProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 1;
+        if (queries == null) {
+            queries = getFromSp();
+        }
+
+        // Assume selectionArgs[0] is the query we want to delete
+        final int index = queries.indexOf(selectionArgs[0]);
+        if (index >= 0) {
+            queries.remove(index);
+            writeToSp(queries);
+            return 1;
+        }
+
+        return 0;
     }
 
     @Override
@@ -56,7 +68,7 @@ public class MockHistoryProvider extends ContentProvider {
         if (queries.contains(query)) {
             return null;
         }
-        while (queries.size() >= 3) {
+        while (queries.size() >= 10) {
             queries.remove(queries.size() - 1);
         }
 
