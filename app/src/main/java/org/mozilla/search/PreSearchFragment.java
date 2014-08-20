@@ -6,6 +6,7 @@ package org.mozilla.search;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Rect;
@@ -16,7 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,7 +31,7 @@ import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -47,14 +48,17 @@ import org.mozilla.search.AcceptsSearchQuery.SuggestionAnimation;
  * This fragment is responsible for managing the card stream.
  */
 public class PreSearchFragment extends Fragment {
+    private static final String LOG_TAG = "PreSearchFragment";
 
     private AcceptsSearchQuery searchListener;
-    private SimpleCursorAdapter cursorAdapter;
+    private CursorAdapter cursorAdapter;
     private ContentResolver contentResolver;
 
     private ListView listView;
 
     private static final String[] PROJECTION = new String[]{ SearchHistory.QUERY, SearchHistory._ID };
+
+    private int originalHeight;
 
     // Limit search history query results to 5 items. This value matches the number of search
     // suggestions we return in SearchFragment.
@@ -89,8 +93,7 @@ public class PreSearchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLoaderManager().initLoader(LOADER_ID_SEARCH_HISTORY, null, new SearchHistoryLoaderCallbacks());
-        cursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.search_card_history, null,
-                PROJECTION, new int[]{R.id.site_name}, 0);
+        cursorAdapter = new SearchHistoryAdapter(getActivity(), null);
     }
 
     @Override
@@ -135,9 +138,8 @@ public class PreSearchFragment extends Fragment {
         final SwipeGestureListener swipeGestureListener = new SwipeGestureListener(listView, new OnSwipeRemoveListener() {
             @Override
             public void onRemove(View v) {
-                Log.i("MMM", "onRemove: " + v);
-
-                final String query = "test";
+                final String query = ((TextView) v).getText().toString();
+                Log.i(LOG_TAG, "*** removing query: " + query);
 
                 final AsyncTask<Void, Void, Boolean> clearHistoryTask = new AsyncTask<Void, Void, Boolean>() {
                     @Override
@@ -152,7 +154,7 @@ public class PreSearchFragment extends Fragment {
                     @Override
                     protected void onPostExecute(Boolean success) {
                         if (!success) {
-                            Log.e("MMM", "Error clearing search history.");
+                            Log.e(LOG_TAG, "Error removing query: " + query);
                         }
                     }
                 };
@@ -198,6 +200,37 @@ public class PreSearchFragment extends Fragment {
             if (cursorAdapter != null) {
                 cursorAdapter.swapCursor(null);
             }
+        }
+    }
+
+    /**
+     * Cursor adapter for the list of search history items.
+     */
+    private class SearchHistoryAdapter extends CursorAdapter {
+        public SearchHistoryAdapter(Context context, Cursor cursor) {
+            super(context, cursor, 0);
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            if (cursor == null) {
+                return;
+            }
+
+            final String query = cursor.getString(cursor.getColumnIndexOrThrow(SearchHistory.QUERY));
+            ((TextView) view).setText(query);
+
+            // Reset height that might have been changed in animation.
+            if (originalHeight != 0) {
+                final ViewGroup.LayoutParams lp = view.getLayoutParams();
+                lp.height = originalHeight;
+                view.setLayoutParams(lp);
+            }
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return LayoutInflater.from(parent.getContext()).inflate(R.layout.search_card_history, parent, false);
         }
     }
 
@@ -396,11 +429,14 @@ public class PreSearchFragment extends Fragment {
         }
 
         private void animateFinishRemove(final View view) {
-            final int height = view.getHeight();
+            // This assumes all rows have the same height;
+            if (originalHeight == 0) {
+                originalHeight = view.getHeight();
+            }
             final Animation anim = new Animation() {
                 @Override
                 protected void applyTransformation(float interpolatedTime, Transformation t) {
-                    view.getLayoutParams().height = Math.round((height * (1 - interpolatedTime)));
+                    view.getLayoutParams().height = Math.round((originalHeight * (1 - interpolatedTime)));
                     view.requestLayout();
                 }
             };
@@ -413,6 +449,10 @@ public class PreSearchFragment extends Fragment {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     listener.onRemove(view);
+
+                    final ViewGroup.LayoutParams lp = view.getLayoutParams();
+                    lp.height = 0;
+                    view.setLayoutParams(lp);
                 }
 
                 @Override
