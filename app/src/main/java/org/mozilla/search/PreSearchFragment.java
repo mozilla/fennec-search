@@ -220,12 +220,14 @@ public class PreSearchFragment extends Fragment {
             final String query = cursor.getString(cursor.getColumnIndexOrThrow(SearchHistory.QUERY));
             ((TextView) view).setText(query);
 
-            // Reset height that might have been changed in animation.
+            // Reset properties that might have been changed in animation.
             if (originalHeight != 0) {
                 final ViewGroup.LayoutParams lp = view.getLayoutParams();
                 lp.height = originalHeight;
                 view.setLayoutParams(lp);
             }
+
+            ViewHelper.setTranslationX(view, 0);
         }
 
         @Override
