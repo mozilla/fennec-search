@@ -6,10 +6,9 @@ package org.mozilla.search.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import org.mozilla.search.Constants;
 import org.mozilla.search.MainActivity;
 import org.mozilla.search.PostSearchFragment;
-import org.mozilla.search.autocomplete.SuggestionsFragment;
+import org.mozilla.search.R;
 import org.mozilla.search.PreSearchFragment;
 
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
@@ -75,28 +74,19 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     private PostSearchFragment getPostSearchFragment() {
         return (PostSearchFragment) getActivity()
-                .getSupportFragmentManager().findFragmentByTag(Constants.POSTSEARCH_FRAGMENT);
+                .getSupportFragmentManager().findFragmentById(R.id.postsearch);
     }
 
     private PreSearchFragment getPreSearchFragment() {
         return (PreSearchFragment) getActivity()
-                .getSupportFragmentManager().findFragmentByTag(Constants.PRESEARCH_FRAGMENT);
-    }
-
-    private SuggestionsFragment getSearchFragment() {
-        return (SuggestionsFragment) getActivity()
-                .getSupportFragmentManager().findFragmentByTag(Constants.SEARCH_FRAGMENT);
+                .getSupportFragmentManager().findFragmentById(R.id.presearch);
     }
 
     private void assertPreSearchVisible() {
-        assertTrue(getPostSearchFragment().isHidden());
         assertTrue(getPreSearchFragment().isVisible());
-        assertTrue(getSearchFragment().isVisible());
     }
 
     private void assertPostSearchVisible() {
         assertTrue(getPostSearchFragment().isVisible());
-        assertTrue(getPreSearchFragment().isHidden());
-        assertTrue(getSearchFragment().isVisible());
     }
 }
