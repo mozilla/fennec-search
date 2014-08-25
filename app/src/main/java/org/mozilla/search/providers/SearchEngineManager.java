@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class SearchEngineManager implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private final static String LOG_TAG = "SearchEngineManager";
+    private static final String LOG_TAG = "SearchEngineManager";
 
     private Context context;
     private SearchEngineCallback changeCallback;
