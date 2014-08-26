@@ -65,6 +65,15 @@ public interface TelemetryContract {
         // Perform a search -- currently used when starting a search in the search activity.
         SEARCH("search.1"),
 
+        // Remove a search engine.
+        SEARCH_REMOVE("search.remove.1"),
+
+        // Restore default search engines.
+        SEARCH_RESTORE_DEFAULTS("search.restoredefaults.1"),
+
+        // Set default search engine.
+        SEARCH_SET_DEFAULT("search.setdefault.1"),
+
         // Sharing content.
         SHARE("share.1"),
 
@@ -82,7 +91,8 @@ public interface TelemetryContract {
         _TEST1("_test_event_1.1"),
         _TEST2("_test_event_2.1"),
         _TEST3("_test_event_3.1"),
-        _TEST4("_test_event_4.1");
+        _TEST4("_test_event_4.1"),
+        ;
 
         private final String string;
 
