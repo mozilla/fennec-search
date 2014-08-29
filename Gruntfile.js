@@ -128,6 +128,7 @@ module.exports = function (grunt) {
                         "*BrowserLocaleManager.java",
                         "*GeckoJarReader.java",
                         "*GeckoSharedPrefs.java",
+                        "*LocaleAware.java",
                         "*LocaleManager.java",
                         "*MockHistoryProvider.java",
                         "*SuggestClient.java",
