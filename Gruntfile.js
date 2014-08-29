@@ -125,8 +125,10 @@ module.exports = function (grunt) {
                     exclude: [
                         "*AppConstants.java",
                         "*BrowserContract.java",
+                        "*BrowserLocaleManager.java",
                         "*GeckoJarReader.java",
                         "*GeckoSharedPrefs.java",
+                        "*LocaleManager.java",
                         "*MockHistoryProvider.java",
                         "*SuggestClient.java",
                         "*Telemetry.java",
