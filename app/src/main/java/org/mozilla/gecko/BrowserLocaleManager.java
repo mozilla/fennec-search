@@ -50,6 +50,11 @@ public class BrowserLocaleManager implements LocaleManager {
       return new BrowserLocaleManager();
     }
 
+    public static String getLanguageTag(final Locale locale) {
+        Log.d(LOG_TAG, "Stub: getLanguageTag.");
+        return locale.toString();
+    }
+
     @Override
     public void updateConfiguration(Context context, Locale locale) {
     }
