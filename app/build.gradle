@@ -24,6 +24,13 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    sourceSets {
+        main {
+            java.srcDir 'src/external/java'
+            res.srcDir 'src/external/res'
+        }
+    }
 }
 
 dependencies {
