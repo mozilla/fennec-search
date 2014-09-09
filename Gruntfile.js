@@ -121,19 +121,6 @@ module.exports = function (grunt) {
                     src: [ "app/src/main/java",
                            "manifests",
                          ],
-                    exclude: [
-                        "*AppConstants.java",
-                        "*BrowserContract.java",
-                        "*BrowserLocaleManager.java",
-                        "*GeckoJarReader.java",
-                        "*GeckoSharedPrefs.java",
-                        "*LocaleAware.java",
-                        "*LocaleManager.java",
-                        "*MockHistoryProvider.java",
-                        "*SuggestClient.java",
-                        "*Telemetry.java",
-                        "*TelemetryContract.java"
-                    ],
                     dest: "mobile/android/search/",
                 }
             },
@@ -142,10 +129,6 @@ module.exports = function (grunt) {
                     src: "app/src/main/res",
                     dest: "mobile/android/search/",
                     exclude: [
-                        "fennec_colors.xml",
-                        "widget_icon.png",
-                        "ic_url_bar_search.png",
-                        "launcher_widget.png",
                         "*strings.xml",
                     ],
                 }
