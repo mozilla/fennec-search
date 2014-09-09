@@ -119,7 +119,6 @@ module.exports = function (grunt) {
             main: {
                 options: {
                     src: [ "app/src/main/java",
-                           "strings",
                            "manifests",
                          ],
                     exclude: [
@@ -158,11 +157,20 @@ module.exports = function (grunt) {
                     exclude: ["AndroidManifest.xml.in"],
                 }
             },
-            strings: {
+            strings_dtd: {
                 options: {
-                    src: "strings",
-                    dest: "mobile/android/search/",
-                    exclude: ["strings.xml.in"],
+                    recursive: false,
+                    syncDest: false,
+                    src: "strings/search_strings.dtd",
+                    dest: "mobile/android/base/locales/en-US/search_strings.dtd",
+                }
+            },
+            strings_xml: {
+                options: {
+                    recursive: false,
+                    syncDest: false,
+                    src: "strings/search_strings.xml.in",
+                    dest: "mobile/android/search/strings/search_strings.xml.in",
                 }
             },
         },
