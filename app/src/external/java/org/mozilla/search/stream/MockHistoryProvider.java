@@ -56,7 +56,7 @@ public class MockHistoryProvider extends ContentProvider {
         if (queries.contains(query)) {
             return null;
         }
-        while (queries.size() >= 3) {
+        while (queries.size() >= 10) {
             queries.remove(queries.size() - 1);
         }
 
