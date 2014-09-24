@@ -1,3 +1,5 @@
+**This repo is no longer used for active development. To contribute to the Firefox search activity, please follow the normal [Firefox for Android development process](https://wiki.mozilla.org/Mobile/Fennec/Android).**
+
 # Fennec Search Activity
 
 This is a stand-alone version of the search activity that is built with Firefox for Android. The main source code lives in [mozilla-central](http://hg.mozilla.org/mozilla-central/), but this repo is a tool to make development easier.
