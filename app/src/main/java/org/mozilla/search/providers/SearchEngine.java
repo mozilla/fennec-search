@@ -171,11 +171,11 @@ public class SearchEngine {
         final String css;
 
         if (identifier.equals("bing")) {
-            css = "#mHeader{display:none}#contentWrapper{margin-top:0}";
+            css = "#bLogo,#bArrow,#sbBoxCnt{display:none}#contentWrapper{margin-top:46px}#sw_abar{margin:0}";
         } else if (identifier.equals("google")) {
-            css = "#sfcnt,#top_nav{display:none}";
+            css = "#sfcnt{display:none}";
         } else if (identifier.equals("yahoo")) {
-            css = "#nav,#header{display:none}";
+            css = "#header{display:none}";
         } else {
             css = "";
         }
